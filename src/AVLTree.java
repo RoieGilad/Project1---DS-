@@ -26,6 +26,231 @@ public class AVLTree  {
 	}
 
 
+	//inser!!
+//first func for insert
+	private IAVLNode place_to_insert(IAVLNode node) { //the last node to insert
+		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
+		IAVLNode search = this.root;
+		IAVLNode place = search; //always not null
+		while (search != null) {
+			place = search;
+			if (search.getKey() == node.getKey()){
+				return search;
+			}
+			if (search.getKey() > node.getKey()) {
+				search = search.getLeft();
+			} else  {
+				search = search.getRight();
+			}
+
+		}
+		return place;
+	}
+
+	//second func for insert
+	private int rebalance(IAVLNode node, int d){
+		int left_dist = node.getRankLeft();
+		int right_dist = node.getRankRight();
+
+		if ((left_dist == 0 && right_dist == 1) || (left_dist == 1 && right_dist == 0)) //case A - (1,0)/(0,1) - promote
+		{
+			node.setHeightAlone(); //promote
+			if (node.getParent() != null){
+				rebalance(node.getParent(), d+1); //counting 1 promotion
+			} else{
+				this.Height += 1;
+				return d+1;
+			}
+
+		}
+		else if (left_dist == 0 && right_dist == 2) { //case B (0,2) - need a rotation, rebalance complete after
+			IAVLNode z = node;
+			IAVLNode x = node.getLeft();
+			int left_left_dist = x.getRankLeft();
+			if (left_left_dist == 1) { // (1,2)
+				rotate_right(x,z);
+				z.setHeightAlone(); //demote z
+				return d + 2; // one rotation, one demotion
+
+			} else { // (2,1) - double rotation
+				IAVLNode b = x.getRight();
+				rotate_left(x, b);
+				rotate_right(b, z);
+				x.setHeightAlone();
+				z.setHeightAlone(); //set z height
+				b.setHeightAlone(); //set b height
+				return d + 5; // two rotations, 3 promotions
+
+			}
+		}
+		else if (right_dist == 0 && left_dist == 2) { //symetric case (2,0)
+			IAVLNode z = node;
+			IAVLNode x = node.getRight();
+			int right_right_dist = x.getRankRight();
+			if (right_right_dist == 1) { //(2,1)
+				rotate_left(z, x);
+				z.setHeightAlone(); //demote z
+				return d + 2;
+
+			} else { //(1,2)
+				IAVLNode b = x.getLeft();
+				rotate_right(b, x);
+				rotate_left(z, b);
+				x.setHeightAlone();
+				z.setHeightAlone(); //set z height
+				b.setHeightAlone(); //set b height
+				return d + 5;
+
+			}
+		}
+
+		return d;
+	}
+
+	//third func for insert
+	private void rotate_right(IAVLNode left_child, IAVLNode node){ //gets (x,z) x is the left child of z, changes between them
+		node.setLeft(left_child.getRight()); // z left child is b
+		node.getLeft().setParent(node); // b's father is z
+		if (node.getParent() != null){ //update the parent
+
+			if (node.getParent().getKey() > node.getKey()){ //checks if the parent child is left or right
+				node.getParent().setLeft(left_child);
+			} else {
+				node.getParent().setRight(left_child);
+			}
+			left_child.setParent(node.getParent());  //attach the new child to the parent
+		}
+		left_child.setRight(node); // z is right child of x
+		node.setParent(left_child); // x is father of z
+
+	}
+
+
+
+	//main func
+	public int insert(int k, String i) {
+		IAVLNode new_node = new AVLNode(k, i);
+		if (this.root == null) {
+			this.root = new_node;
+			this.min = new_node;
+			this.max = new_node;
+			this.size = 1;
+			return 0;
+		}
+
+		IAVLNode place_to_insert = place_to_insert(new_node);
+		if (place_to_insert.getKey() == k){
+			return -1;
+		}
+		new_node.setParent(place_to_insert); //attaches the node to the right place
+		if (place_to_insert.getKey() > k){ //checks if the node is a right son or left
+			place_to_insert.setLeft(new_node);
+		} else {
+			place_to_insert.setRight(new_node);
+		}
+		if (k < this.min.getKey()){ //update min
+			this.min = new_node;
+		}
+		if (k > this.max.getKey()){ //update max
+			this.max = new_node;
+		}
+		this.size = this.size + 1;
+		return rebalance(place_to_insert, 0); // d is the number of operations
+	}
+
+
+
+	private IAVLNode predecessor(IAVLNode node){
+		IAVLNode check;
+		if (node.getLeft().isRealNode()){
+			check = node.getLeft();
+			while (check.getRight() != null){
+				check = check.getRight();
+			}
+		} else{ //the successor is above
+			check = node.getParent();
+		}
+		while (check.isRealNode() && check.getKey() > node.getKey()) {
+			check = check.getParent();
+		}
+		return check;
+
+	}
+
+
+	private int[] inorder_walk_key(IAVLNode root){
+//	int cnt = 0;
+//	IAVLNode node = root;
+//	int[] order = new int[size()];
+////	Stack<IAVLNode> save = new Stack<IAVLNode>();
+////	while ((node.getLeft() != null)||(save!= null)){
+//		if (node.getLeft()!=null){
+////			save.push(node);
+//			node = node.getLeft();
+//		} else{
+//			order[cnt] = node.getKey();
+//			cnt += 1;
+//			if (node.getRight() != null){
+//				node = node.getRight();
+//			} else{
+////				node = save.pop();
+//			}
+//		}
+//
+	return null;	}
+	//	return order;
+
+
+	private String[] inorder_walk_val(IAVLNode root){   return null ;}
+//	int cnt = 0;
+//	IAVLNode node = root;
+//	String[] order = new String[size()];
+///	Stack<IAVLNode> save = new Stack<IAVLNode>();
+///	while ((node.getLeft() != null)||(save!= null)){
+//		if (node.getLeft()!=null){
+///			save.push(node);
+//			node = node.getLeft();
+//		} else{
+//			order[cnt] = node.getValue();
+//			cnt += 1;
+//			if (node.getRight() != null){
+//				node = node.getRight();
+//			} else{
+///				node = save.pop();
+//			}
+//		}
+//
+//	}
+//	return order;
+//
+
+
+
+
+
+	/**
+	 * public int[] keysToArray()
+	 *
+	 * Returns a sorted array which contains all keys in the tree,
+	 * or an empty array if the tree is empty.
+	 */
+	public int[] keysToArray()
+	{
+		return inorder_walk_key(this.root);
+	}
+
+	/**
+	 * public String[] infoToArray()
+	 *
+	 * Returns an array which contains all info in the tree,
+	 * sorted by their respective keys,
+	 * or an empty array if the tree is empty.
+	 */
+	public String[] infoToArray()
+	{
+		return inorder_walk_val(this.root); // to be replaced by student code
+	}
+
 	/**
 	 * public String search(int k)
 	 *
@@ -304,6 +529,7 @@ public class AVLTree  {
 			node = node.getLeft();}
 		return node;}
 
+	
 	/**
 	 * public StringBe min()
 	 *
@@ -315,6 +541,24 @@ public class AVLTree  {
 		return (root == null) ? null : min.getValue();
 	}
 
+	private IAVLNode find(int k){ // finding node with key = K
+		IAVLNode curr = this.root;
+
+		while (curr != null && curr.isRealNode()){ // check if dead end
+
+			if ( k== curr.getKey()){ //found node with key = K
+				return curr;}
+
+			else if (k < curr.getKey()){ // go left
+				curr = curr.getLeft();}
+
+			else { curr = curr.getRight();} // go right
+		}
+
+		if (curr == null){return null;}
+		else if (curr.isRealNode()){ // if found real return the node
+			return curr;}
+		else { return null;}} // if not return null
 	/**
 	 * public String max()
 	 *
@@ -326,28 +570,6 @@ public class AVLTree  {
 		return (root == null) ? null : max.getValue();
 	}
 
-	/**
-	 * public int[] keysToArray()
-	 *
-	 * Returns a sorted array which contains all keys in the tree,
-	 * or an empty array if the tree is empty.
-	 */
-	public int[] keysToArray()
-	{
-		return new int[33]; // to be replaced by student code
-	}
-
-	/**
-	 * public String[] infoToArray()
-	 *
-	 * Returns an array which contains all info in the tree,
-	 * sorted by their respective keys,
-	 * or an empty array if the tree is empty.
-	 */
-	public String[] infoToArray()
-	{
-		return new String[55]; // to be replaced by student code
-	}
 
 	/**
 	 * public int size()
