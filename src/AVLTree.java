@@ -165,14 +165,14 @@ public class AVLTree  {
 		if (k > this.max.getKey()){ //update max
 			this.max = new_node;
 		}
-		node_size_maintain(new_node, true);
+		node_size_maintain(new_node);
 		this.size = this.size + 1;
 		return rebalance(place_to_insert, 0); // d is the number of operations
 	}
 
 
 	//update size after deletion or insertion
-	private void node_size_maintain(IAVLNode bottom_node, boolean increas){ //if increas then to add 1, otherwise- decreas- minus 1
+	private void node_size_maintain(IAVLNode bottom_node){
 		while (bottom_node.getParent() != null){
 			bottom_node.setSizeAlone();
 			bottom_node = bottom_node.getParent();
