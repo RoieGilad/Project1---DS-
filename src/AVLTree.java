@@ -70,6 +70,8 @@ public class AVLTree  {
 			if (left_left_dist == 1) { // (1,2)
 				rotate_right(x,z);
 				z.setHeightAlone(); //demote z
+				z.setSizeAlone(); //update size
+				x.setSizeAlone(); //update size
 				return d + 2; // one rotation, one demotion
 
 			} else { // (2,1) - double rotation
@@ -79,6 +81,9 @@ public class AVLTree  {
 				x.setHeightAlone();
 				z.setHeightAlone(); //set z height
 				b.setHeightAlone(); //set b height
+				x.setSizeAlone(); //update size from down to up
+				z.setSizeAlone();
+				b.setSizeAlone();
 				return d + 5; // two rotations, 3 promotions
 
 			}
@@ -90,6 +95,8 @@ public class AVLTree  {
 			if (right_right_dist == 1) { //(2,1)
 				rotate_left(z, x);
 				z.setHeightAlone(); //demote z
+				z.setSizeAlone();
+				x.setSizeAlone();
 				return d + 2;
 
 			} else { //(1,2)
@@ -99,6 +106,9 @@ public class AVLTree  {
 				x.setHeightAlone();
 				z.setHeightAlone(); //set z height
 				b.setHeightAlone(); //set b height
+				x.setSizeAlone();
+				z.setSizeAlone();
+				b.setSizeAlone();
 				return d + 5;
 
 			}
@@ -154,8 +164,18 @@ public class AVLTree  {
 		if (k > this.max.getKey()){ //update max
 			this.max = new_node;
 		}
+		node_size_maintain(new_node, true);
 		this.size = this.size + 1;
 		return rebalance(place_to_insert, 0); // d is the number of operations
+	}
+
+
+	//update size after deletion or insertion
+	private void node_size_maintain(IAVLNode bottom_node, boolean increas){ //if increas then to add 1, otherwise- decreas- minus 1
+		while (bottom_node.getParent() != null){
+			bottom_node.setSizeAlone();
+			bottom_node = bottom_node.getParent();
+		}
 	}
 
 
@@ -177,55 +197,23 @@ public class AVLTree  {
 
 	}
 
+	private int inorder_walk_key(IAVLNode root, int d, int[] result){
+		if (!root.isRealNode()) {
+			return d;
+		}
+		int place = inorder_walk_key(root.getLeft(), d, result);
+		result[place] = root.getKey();
+		return inorder_walk_key(root.getRight(), place+1, result);
+	}
 
-	private int[] inorder_walk_key(IAVLNode root){
-//	int cnt = 0;
-//	IAVLNode node = root;
-//	int[] order = new int[size()];
-////	Stack<IAVLNode> save = new Stack<IAVLNode>();
-////	while ((node.getLeft() != null)||(save!= null)){
-//		if (node.getLeft()!=null){
-////			save.push(node);
-//			node = node.getLeft();
-//		} else{
-//			order[cnt] = node.getKey();
-//			cnt += 1;
-//			if (node.getRight() != null){
-//				node = node.getRight();
-//			} else{
-////				node = save.pop();
-//			}
-//		}
-//
-	return null;	}
-	//	return order;
-
-
-	private String[] inorder_walk_val(IAVLNode root){   return null ;}
-//	int cnt = 0;
-//	IAVLNode node = root;
-//	String[] order = new String[size()];
-///	Stack<IAVLNode> save = new Stack<IAVLNode>();
-///	while ((node.getLeft() != null)||(save!= null)){
-//		if (node.getLeft()!=null){
-///			save.push(node);
-//			node = node.getLeft();
-//		} else{
-//			order[cnt] = node.getValue();
-//			cnt += 1;
-//			if (node.getRight() != null){
-//				node = node.getRight();
-//			} else{
-///				node = save.pop();
-//			}
-//		}
-//
-//	}
-//	return order;
-//
-
-
-
+	private int inorder_walk_val(IAVLNode root, int d, String[] result){
+		if (!root.isRealNode()) {
+			return d;
+		}
+		int place = inorder_walk_val(root.getLeft(), d, result);
+		result[place] = root.getValue();
+		return inorder_walk_val(root.getRight(), place+1, result);
+	}
 
 
 	/**
@@ -236,7 +224,9 @@ public class AVLTree  {
 	 */
 	public int[] keysToArray()
 	{
-		return inorder_walk_key(this.root);
+		int[] result = new int[this.size];
+		inorder_walk_key(this.root, 0, result);
+		return result;
 	}
 
 	/**
@@ -248,8 +238,76 @@ public class AVLTree  {
 	 */
 	public String[] infoToArray()
 	{
-		return inorder_walk_val(this.root); // to be replaced by student code
+		String[] result = new String[this.size];
+		inorder_walk_val(this.root, 0, result);
+		return result;
 	}
+
+	/**
+	 * public int join(IAVLNode x, AVLTree t)
+	 *
+	 * joins t and x with the tree.
+	 * Returns the complexity of the operation (|tree.rank - t.rank| + 1).
+	 *
+	 * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
+	 * postcondition: none
+	 */
+	public int join(IAVLNode x, AVLTree t) {
+		int h_1 = t.Height;
+		int h_2 = this.Height;
+		if (h_1 == -1 && h_2 == -1) { //both empty
+			this.root = x;
+			this.max = x;
+			this.min = x;
+			this.Height = 1;
+			return 1;
+		} else {
+			if (t.root.getKey() < x.getKey()) {
+				return join_in(t, x, this);
+			} else {
+				return join_in(this, x, t);
+			}
+		}
+	}
+
+	private int join_in(AVLTree t1, IAVLNode X, AVLTree t2){
+		int h_1 = t1.Height;
+		int h_2 = t2.Height;
+		if (h_1<h_2){
+			IAVLNode node_travel = t2.root;
+			while (node_travel.getHeight() > h_1){
+				node_travel = node_travel.getLeft();
+			}
+			IAVLNode parent_to_save = node_travel.getParent(); //save it to attach to x
+			X.setLeft(node_travel);
+			node_travel.setParent(X);
+			parent_to_save.setLeft(X);
+			X.setParent(parent_to_save);
+			this.root = t2.root;
+			rebalance(parent_to_save, 0);
+			return h_2-h_1+1;
+		} else {
+			IAVLNode node_travel = t1.root;
+			while (node_travel.getHeight() > h_2){
+				node_travel = node_travel.getRight();
+			}
+			IAVLNode parent_to_save = node_travel.getParent(); //save it to attach to x
+			X.setRight(node_travel);
+			node_travel.setParent(X);
+			parent_to_save.setRight(X);
+			X.setParent(parent_to_save);
+			this.root = t1.root;
+			rebalance(parent_to_save, 0);
+			return h_1-h_2+1;
+		}
+
+	}
+
+
+
+
+
+
 
 	/**
 	 * public String search(int k)
@@ -605,16 +663,6 @@ public class AVLTree  {
 		return null;
 	}
 
-	/**
-	 * public int join(IAVLNode x, AVLTree t)
-	 *
-	 * joins t and x with the tree.
-	 * Returns the complexity of the operation (|tree.rank - t.rank| + 1).
-	 *
-	 * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
-	 * postcondition: none
-	 */
-
 
 
 
@@ -637,6 +685,8 @@ public class AVLTree  {
 		public int getRankLeft();
 		public int getRankRight();
 		public void setHeightAlone();
+		public int getSize();
+		public void setSizeAlone();
 	}
 
 	/**
@@ -655,6 +705,7 @@ public class AVLTree  {
 		private IAVLNode Right;
 		private int Height;
 		private IAVLNode parent;
+		private int size;
 		private  final IAVLNode VirtualNode = new AVLNode();// same digital node for all real nodes
 
 		public AVLNode(Integer key, String info){
@@ -662,6 +713,7 @@ public class AVLTree  {
 			this.info = info;
 			this.Left = VirtualNode;
 			this.Right = VirtualNode;
+			this.size = 1;
 
 		}
 		public AVLNode() { //default constructor for digital node
@@ -670,6 +722,7 @@ public class AVLTree  {
 			this.Left = null;
 			this.Right = null;
 			this.Height = -1;
+			this.size = 0;
 		}
 
 
@@ -694,6 +747,10 @@ public class AVLTree  {
 
 		public IAVLNode getRight() {
 			return this.Right;}
+
+		public int getSize() {
+			return this.size;
+		}
 
 
 		public void setParent(IAVLNode node){
@@ -727,6 +784,11 @@ public class AVLTree  {
 		public void setHeightAlone() { //updating the height of a node
 			this.Height = Math.max(this.Left.getHeight(), this.Right.getHeight()) +1;
 		}
+
+		@Override
+		public void setSizeAlone() { this.size = this.Left.getSize() + this.Right.getSize() + 1; }
+
+
 	}
 
 }
