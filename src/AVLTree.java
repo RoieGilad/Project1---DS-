@@ -15,6 +15,7 @@ public class AVLTree  {
 	private int Height;
 	private int size;
 
+
 	/**
 	 * public boolean empty()
 	 *
@@ -259,7 +260,7 @@ public class AVLTree  {
 			this.root = x;
 			this.max = x;
 			this.min = x;
-			this.Height = 1;
+			this.Height = 1; // 	TODO
 			return 1;
 		} else {
 			if (t.root.getKey() < x.getKey()) {
@@ -697,7 +698,7 @@ public class AVLTree  {
 	 *
 	 * This class can and MUST be modified (It must implement IAVLNode).
 	 */
-	public class AVLNode implements IAVLNode {
+	public static class AVLNode implements IAVLNode { //TODO inner class static?
 
 		private int key;
 		private String info;
@@ -706,7 +707,7 @@ public class AVLTree  {
 		private int Height;
 		private IAVLNode parent;
 		private int size;
-		private  final IAVLNode VirtualNode = new AVLNode();// same digital node for all real nodes
+		private static final IAVLNode VirtualNode = new AVLNode();// same digital node for all real nodes
 
 		public AVLNode(Integer key, String info){
 			this.key = key;
