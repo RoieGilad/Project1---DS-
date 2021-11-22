@@ -5,32 +5,48 @@ import java.util.List;
 public class SelfTester {
 
     public static void main(String[] args) {
-        int size = 2 ^ 6;
+        int size =(int) Math.pow(2,4);
+        int numberOfDelete = 10;
         ArrayList<Integer> numToInsert = new ArrayList<>();
         for (int i = 0; i < size - 1; i++) {
             numToInsert.add(i + 1);
         }
-        numToInsert.add(size - 1); // duble insert
+        numToInsert.add(size - 1); // double insert
         Collections.shuffle(numToInsert);
-
+        System.out.println(numToInsert);
         AVLTree testing = new AVLTree();
         for (int i : numToInsert) {
             testing.insert(i, "test");
-            if (!checkBalanceOfTree(testing.getRoot())) {
-                System.out.println("error in insert" + i);
-          //      TreePrinter.print(testing.getRoot());
+
+
             }
-        }
-        Collections.shuffle(numToInsert);
-        for (int i : numToInsert) {
-            testing.delete(i);
-            if (!checkBalanceOfTree(testing.getRoot())) {
-                System.out.println("error in delete" + i);
-                // print
-            }
+      if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {
+          System.out.println("error in insert" );}
+      //      TreePrinter.print(testing.getRoot());
+      else {
+          System.out.println("insert work");}
+
+  //      Collections.shuffle(numToInsert);
+//     boolean errorDelete = false;
+//     int cnt = 0;
+//     for (int i : numToInsert) {
+//         testing.delete(i);
+//         cnt++;
+//       if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {
+//           errorDelete = true;
+//           System.out.println("error in delete" + i);
+//           //      TreePrinter.print(testing.getRoot());
+//
+//           // print
+//       }
+//         if (cnt > numberOfDelete ){
+//             break;}
+//  }
+//         if (!errorDelete){
+//         System.out.println("delete work");}
 
         }
-    }
+
 
     public static  boolean checkBalanceOfTree(AVLTree.IAVLNode current) {
         boolean balancedRight = true, balancedLeft = true;

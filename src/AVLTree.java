@@ -13,7 +13,7 @@ public class AVLTree  {
 	private IAVLNode min;
 	private IAVLNode max;
 	private int Height;
-	private int size;
+	private int size; //TODO NO NEED - SIZE OF THE TREE = ROOT.SIZE
 
 
 	/**
@@ -33,7 +33,7 @@ public class AVLTree  {
 		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
 		IAVLNode search = this.root;
 		IAVLNode place = search; //always not null
-		while (search != null) {
+		while (search.isRealNode()) { // TODO	 CHECK IF ISREALNODE WAS THE ONLY PROBLEM
 			place = search;
 			if (search.getKey() == node.getKey()){
 				return search;
@@ -139,7 +139,7 @@ public class AVLTree  {
 
 
 	//main func
-	public int insert(int k, String i) {
+	public int insert(int k, String i) { //TODO CHECK WHY WE INSERT SAME KEY TWICE
 		IAVLNode new_node = new AVLNode(k, i);
 		if (this.root == null) {
 			this.root = new_node;
@@ -165,7 +165,7 @@ public class AVLTree  {
 		if (k > this.max.getKey()){ //update max
 			this.max = new_node;
 		}
-		node_size_maintain(new_node);
+//		node_size_maintain(new_node); //TODO DOING SOME PROBLEMS
 		this.size = this.size + 1;
 		return rebalance(place_to_insert, 0); // d is the number of operations
 	}
@@ -176,6 +176,13 @@ public class AVLTree  {
 		while (bottom_node.getParent() != null){
 			bottom_node.setSizeAlone();
 			bottom_node = bottom_node.getParent();
+		}
+	}
+
+	private void updateTillRoot(IAVLNode node){
+		while (node.getParent() != null){
+			node.updateNode();
+			node = node.getParent();
 		}
 	}
 
@@ -386,8 +393,9 @@ public class AVLTree  {
 	private int reBalanceDelete(IAVLNode node , int cnt) {
 		int L = node.getRankLeft();
 		int R = node.getRankRight();
-
+		boolean balanced = false;
 		if (L== 3 && R == 1){ // the node that is about to rebalance is in (3,1) condition
+			balanced = true;
 			IAVLNode RightChild = node.getRight();
 			int RL = RightChild.getRankLeft();
 			int RR = RightChild.getRankRight();
@@ -403,6 +411,7 @@ public class AVLTree  {
 		}
 
 		else if (L == 1 && R== 3 ){ // the node that is about to rebalance is in (1,3) condition
+			balanced = true;
 			IAVLNode LeftChild = node.getLeft();
 			int LL = LeftChild.getRankLeft();
 			int LR = LeftChild.getRankRight();
@@ -418,13 +427,17 @@ public class AVLTree  {
 		}
 
 		else if (L == 2 && R == 2){ // the node that is about to rebalance is in (2,2) condition
+			balanced = true;
 			cnt += reBalanceCase22(node, cnt );}
+		if (!balanced){
+			this.updateTillRoot(node);
+		}
 		// the node is balanced
 		return cnt ;}
 
 
 	private int reBalanceCase22(IAVLNode node , int cnt) { //rebalance after delete (2,2) case
-		node.setHeightAlone(); // demote
+		node.updateNode(); // demote
 		if (this.root == node){ // no need to go and rebalance parent
 			return  cnt + 1;}
 		else{
@@ -441,9 +454,9 @@ public class AVLTree  {
 			rotate_left(y,a);// rotate left on (y,a) edge
 			rotate_right(a,z);// rotate right on (a,z)
 		}
-		z.setHeightAlone();// promotes and demotes
-		y.setHeightAlone();
-		a.setHeightAlone();
+		z.updateNode();// promotes and demotes
+		y.updateNode();
+		a.updateNode();
 
 		if (this.root == a){ // there is no need to go up for rebalancing
 			return cnt + 6;}
@@ -458,7 +471,7 @@ public class AVLTree  {
 		else if (!left) {
 			rotate_right(y,z);// rotate right (y,z) edge
 		}
-		z.setHeightAlone(); // demote twice z
+		z.updateNode(); // demote twice z
 		if (this.root == y){ // there is no need to go up for rebalancing
 			return cnt + 3;}
 		else { // go up and check if rebalanced
@@ -472,8 +485,8 @@ public class AVLTree  {
 
 		else {
 			rotate_right(y,z);	}// rotate right on the (y,z) edge
-		z.setHeightAlone();// demote z
-		y.setHeightAlone();// promote y
+		z.updateNode();// demote z
+		y.updateNode();// promote y
 		return 3;}
 
 	//
@@ -515,7 +528,7 @@ public class AVLTree  {
 		//replacing nDelete with his successor
 		mySuccessor.setLeft(nDelete.getLeft());
 		mySuccessor.setRight(nDelete.getRight());
-		mySuccessor.setHeightAlone(); // updating successor by the new sons
+		mySuccessor.updateNode(); // updating successor by the new sons
 		return tmp;}
 
 
@@ -637,7 +650,7 @@ public class AVLTree  {
 	 */
 	public int size()
 	{
-		return size; // to be replaced by student code
+		return root.getSize(); // to be replaced by student code
 	}
 
 	/**
@@ -688,6 +701,8 @@ public class AVLTree  {
 		public void setHeightAlone();
 		public int getSize();
 		public void setSizeAlone();
+
+		void updateNode();
 	}
 
 	/**
@@ -788,6 +803,10 @@ public class AVLTree  {
 
 		@Override
 		public void setSizeAlone() { this.size = this.Left.getSize() + this.Right.getSize() + 1; }
+
+		public void updateNode(){
+			this.setHeightAlone();
+			this.setSizeAlone();}
 
 
 	}
