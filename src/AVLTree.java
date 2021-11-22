@@ -27,7 +27,7 @@ public class AVLTree  {
 	}
 
 
-	//inser!!
+	//insert!!
 //first func for insert
 	private IAVLNode place_to_insert(IAVLNode node) { //the last node to insert
 		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
@@ -55,11 +55,11 @@ public class AVLTree  {
 
 		if ((left_dist == 0 && right_dist == 1) || (left_dist == 1 && right_dist == 0)) //case A - (1,0)/(0,1) - promote
 		{
-			node.setHeightAlone(); //promote
+			node.updateNode(); //promote
 			if (node.getParent() != null){
 				rebalance(node.getParent(), d+1); //counting 1 promotion
 			} else{
-				this.Height += 1;
+				this.Height += 1; //dont need if we dont keep the hight sade
 				return d+1;
 			}
 
@@ -70,21 +70,17 @@ public class AVLTree  {
 			int left_left_dist = x.getRankLeft();
 			if (left_left_dist == 1) { // (1,2)
 				rotate_right(x,z);
-				z.setHeightAlone(); //demote z
-				z.setSizeAlone(); //update size
-				x.setSizeAlone(); //update size
+				z.updateNode(); //demote z + size
+				x.updateNode(); //update size
 				return d + 2; // one rotation, one demotion
 
 			} else { // (2,1) - double rotation
 				IAVLNode b = x.getRight();
 				rotate_left(x, b);
 				rotate_right(b, z);
-				x.setHeightAlone();
-				z.setHeightAlone(); //set z height
-				b.setHeightAlone(); //set b height
-				x.setSizeAlone(); //update size from down to up
-				z.setSizeAlone();
-				b.setSizeAlone();
+				x.updateNode();
+				z.updateNode(); //set z height
+				b.updateNode(); //set b height
 				return d + 5; // two rotations, 3 promotions
 
 			}
@@ -95,26 +91,21 @@ public class AVLTree  {
 			int right_right_dist = x.getRankRight();
 			if (right_right_dist == 1) { //(2,1)
 				rotate_left(z, x);
-				z.setHeightAlone(); //demote z
-				z.setSizeAlone();
-				x.setSizeAlone();
+				z.updateNode(); //demote z
+				x.updateNode();
 				return d + 2;
 
 			} else { //(1,2)
 				IAVLNode b = x.getLeft();
 				rotate_right(b, x);
 				rotate_left(z, b);
-				x.setHeightAlone();
-				z.setHeightAlone(); //set z height
-				b.setHeightAlone(); //set b height
-				x.setSizeAlone();
-				z.setSizeAlone();
-				b.setSizeAlone();
+				x.updateNode();
+				z.updateNode(); //set z height
+				b.updateNode(); //set b height
 				return d + 5;
 
 			}
 		}
-
 		return d;
 	}
 
@@ -129,8 +120,9 @@ public class AVLTree  {
 			} else {
 				node.getParent().setRight(left_child);
 			}
-			left_child.setParent(node.getParent());  //attach the new child to the parent
+
 		}
+		left_child.setParent(node.getParent());  //attach the new child to the parent
 		left_child.setRight(node); // z is right child of x
 		node.setParent(left_child); // x is father of z
 
@@ -165,9 +157,10 @@ public class AVLTree  {
 		if (k > this.max.getKey()){ //update max
 			this.max = new_node;
 		}
-//		node_size_maintain(new_node); //TODO DOING SOME PROBLEMS
 		this.size = this.size + 1;
-		return rebalance(place_to_insert, 0); // d is the number of operations
+		int result =  rebalance(place_to_insert, 0); // d is the number of operations
+		updateTillRoot(place_to_insert); // if the rebalance isnt happening- the problem for size
+		return result;
 	}
 
 
@@ -184,6 +177,7 @@ public class AVLTree  {
 			node.updateNode();
 			node = node.getParent();
 		}
+		node.updateNode(); //tal changed- we didnt update the last one
 	}
 
 

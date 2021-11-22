@@ -14,15 +14,18 @@ public class SelfTester {
         numToInsert.add(size - 1); // double insert
         Collections.shuffle(numToInsert);
         System.out.println(numToInsert);
+//        int[] numToInsert = {8, 9, 5, 12, 15, 13, 1, 6, 4, 15, 11, 7, 2, 14, 10, 3};
         AVLTree testing = new AVLTree();
         for (int i : numToInsert) {
             testing.insert(i, "test");
 
-
             }
+        System.out.println(testing.getRoot().getRight().getSize());
+        System.out.println(testing.getRoot().getLeft().getSize());
+        System.out.println(testing.size());
       if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {
           System.out.println("error in insert" );}
-      //      TreePrinter.print(testing.getRoot());
+//            TreePrinter.print(testing.getRoot());
       else {
           System.out.println("insert work");}
 
