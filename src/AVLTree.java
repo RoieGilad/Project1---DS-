@@ -121,6 +121,8 @@ public class AVLTree  {
 				node.getParent().setRight(left_child);
 			}
 
+		} else{
+			this.root = left_child;
 		}
 		left_child.setParent(node.getParent());  //attach the new child to the parent
 		left_child.setRight(node); // z is right child of x
@@ -337,7 +339,10 @@ public class AVLTree  {
 			if (node1.getParent().getKey() < node1.getKey()){
 				node1.getParent().setRight(node2);}
 			else{
-				node1.getParent().setLeft(node2);}}
+				node1.getParent().setLeft(node2);}
+		} else {
+			this.root = node2; //tal changed- new,   update the root
+		}
 		node2.setParent(node1.getParent());
 		node1.setParent(node2);
 	}

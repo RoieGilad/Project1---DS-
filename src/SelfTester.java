@@ -5,7 +5,7 @@ import java.util.List;
 public class SelfTester {
 
     public static void main(String[] args) {
-        int size =(int) Math.pow(2,4);
+        int size =(int) Math.pow(2,5);
         int numberOfDelete = 10;
         ArrayList<Integer> numToInsert = new ArrayList<>();
         for (int i = 0; i < size - 1; i++) {
@@ -14,12 +14,17 @@ public class SelfTester {
         numToInsert.add(size - 1); // double insert
         Collections.shuffle(numToInsert);
         System.out.println(numToInsert);
-//        int[] numToInsert = {8, 9, 5, 12, 15, 13, 1, 6, 4, 15, 11, 7, 2, 14, 10, 3};
+//        int[] numToInsert = {1,2,3, 4};
         AVLTree testing = new AVLTree();
         for (int i : numToInsert) {
             testing.insert(i, "test");
+            if (i % 2 == 0) {
+                if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {
+                    System.out.println("error in balance");
+                }
 
             }
+        }
         System.out.println(testing.getRoot().getRight().getSize());
         System.out.println(testing.getRoot().getLeft().getSize());
         System.out.println(testing.size());
