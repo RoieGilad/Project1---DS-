@@ -122,7 +122,7 @@ public class AVLTree  {
 			}
 
 		} else{
-			this.root = left_child;
+			this.root = left_child; //can be a problem with join_in- there is no tree
 		}
 		left_child.setParent(node.getParent());  //attach the new child to the parent
 		left_child.setRight(node); // z is right child of x
@@ -263,22 +263,50 @@ public class AVLTree  {
 			this.root = x;
 			this.max = x;
 			this.min = x;
-			this.Height = 1; // 	TODO
-			return 1;
-		} else {
-			if (t.root.getKey() < x.getKey()) {
-				return join_in(t, x, this);
+			this.Height = 0; // 	TODO
+		} else if (h_2 == -1){ // this tree empty
+			if (t.getRoot().getKey() > x.getKey()){
+				this.min = x;
+				this.max = t.max;
+				this.root = join_in(this.getRoot(), x, t.getRoot());
 			} else {
-				return join_in(this, x, t);
+				this.min = t.min;
+				this.max = x;
+				this.root = join_in(t.getRoot(), x, this.getRoot());
+
+			}
+		} else if (h_1 == -1){ // t tree is empty
+			if (this.getRoot().getKey() > x.getKey()){
+				this.min = x;
+				this.root = join_in(t.getRoot(), x, this.getRoot());
+			} else {
+				this.max = x;
+				this.root = join_in(this.getRoot(), x, t.getRoot());
 			}
 		}
+		if (t.root.getKey() < x.getKey()) { //both not empty t is the smallest
+			this.min = t.min;
+			this.root = join_in(t.getRoot(), x, this.getRoot());
+		} else { //both not empty this is the smallest
+			this.max = t.max;
+			this.root = join_in(this.getRoot(), x, t.getRoot());
+		}
+		return Math.abs(h_1-h_2)+1;
 	}
 
-	private int join_in(AVLTree t1, IAVLNode X, AVLTree t2){
-		int h_1 = t1.Height;
-		int h_2 = t2.Height;
-		if (h_1<h_2){
-			IAVLNode node_travel = t2.root;
+	private IAVLNode join_in(IAVLNode t1, IAVLNode X, IAVLNode t2){ //(left side- smallest, x, right side- biggest),
+		// returns the root!! - the upper node! the join fix the empty cases- join_in takes non empty trees..
+		int h_1 = t1.getHeight();
+		int h_2 = t2.getHeight();
+		if (Math.abs(h_1-h_2) <= 1){ //the two trees almost equal - just attach x
+			X.setRight(t1);
+			t1.setParent(X);
+			X.setLeft(t2);
+			t2.setParent(X);
+			return X;
+		}
+		else if (h_1 < h_2){
+			IAVLNode node_travel = t2;
 			while (node_travel.getHeight() > h_1){
 				node_travel = node_travel.getLeft();
 			}
@@ -287,11 +315,11 @@ public class AVLTree  {
 			node_travel.setParent(X);
 			parent_to_save.setLeft(X);
 			X.setParent(parent_to_save);
-			this.root = t2.root;
 			rebalance(parent_to_save, 0);
-			return h_2-h_1+1;
+			updateTillRoot(X);
+			return t2; //this is the new root
 		} else {
-			IAVLNode node_travel = t1.root;
+			IAVLNode node_travel = t1;
 			while (node_travel.getHeight() > h_2){
 				node_travel = node_travel.getRight();
 			}
@@ -300,11 +328,10 @@ public class AVLTree  {
 			node_travel.setParent(X);
 			parent_to_save.setRight(X);
 			X.setParent(parent_to_save);
-			this.root = t1.root;
 			rebalance(parent_to_save, 0);
-			return h_1-h_2+1;
+			updateTillRoot(X);
+			return t1; //this is the new root
 		}
-
 	}
 
 
