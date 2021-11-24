@@ -122,7 +122,7 @@ public class AVLTree  {
 			}
 
 		} else{
-			this.root = left_child; //can be a problem with join_in- there is no tree
+			this.root = left_child; //can be a problem with join_in- there is no tree //TODO ????
 		}
 		left_child.setParent(node.getParent());  //attach the new child to the parent
 		left_child.setRight(node); // z is right child of x
@@ -401,7 +401,7 @@ public class AVLTree  {
 				if (nDelete.getKey() == this.max.getKey()){
 					this.max = this.predecessor(nDelete);}
 			}
-			size -= 1;
+			size -= 1; //TODO whats that??
 			IAVLNode toBeRebalance = this.deleteRetrieve(nDelete); // delete nDelete and retrieve the node that rebalancing should start from
 
 			if (toBeRebalance == null){return 0;}
@@ -429,10 +429,10 @@ public class AVLTree  {
 			if (RL == 1 && RR ==1){ // (3,1) condition and the left child is at (1,1) condiotion
 				cnt += reBalanceCase3111(node, RightChild, true , cnt );}
 
-			else if (RL == 2 && RR == 1){ // (3,1) condition and the left child is at (2,1) condiotion
+			else if (RL == 2 && RR == 1){ // (3,1) condition and the right child is at (2,1) condiotion
 				cnt += reBalanceCase3121(node, RightChild , true , cnt );}
 
-			else if (RL == 1 && RR == 2){ // (3,1) condition and the left child is at (1,2) condiotion
+			else if (RL == 1 && RR == 2){ // (3,1) condition and the right child is at (1,2) condiotion
 				cnt += reBalanceCase3112(node,RightChild,RightChild.getLeft(),true , cnt );}
 		}
 
@@ -443,13 +443,13 @@ public class AVLTree  {
 			int LR = LeftChild.getRankRight();
 
 			if (LL == 1 && LR ==1){ // (1,3) condition and the left child is at (1,1) condiotion
-				cnt += reBalanceCase3111(node, LeftChild, false , cnt );}
+				cnt += reBalanceCase3111( node,LeftChild, false , cnt );}
 
 			else if (LL == 2 && LR == 1){ // (1,3) condition and the left child is at (2,1) condiotion
-				cnt += reBalanceCase3121(node, LeftChild , false, cnt  );}
+				cnt += reBalanceCase3112(node , LeftChild , LeftChild.getRight() ,false, cnt );}
 
 			else if (LL == 1 && LR == 2){  // (1,3) condition and the left child is at (1,2) condiotion
-				cnt += reBalanceCase3112(node , LeftChild , LeftChild.getRight() ,false, cnt );}
+				cnt += reBalanceCase3121( node,LeftChild, false, cnt  );}
 		}
 
 		else if (L == 2 && R == 2){ // the node that is about to rebalance is in (2,2) condition
@@ -528,7 +528,7 @@ public class AVLTree  {
 		else if ((nDelete.getLeft().isRealNode()) && (!nDelete.getRight().isRealNode())) { // unary node with only left node
 			returnNode = deleteRetrieveLeft(nDelete);}
 
-		else if ((nDelete.getLeft().isRealNode()) && (!nDelete.getRight().isRealNode())) { // unary node with only Right node
+		else if ((!nDelete.getLeft().isRealNode()) && (nDelete.getRight().isRealNode())) { // unary node with only Right node
 			returnNode = deleteRetrieveRight(nDelete);}
 
 		else if ((nDelete.getLeft().isRealNode()) && (nDelete.getRight().isRealNode())) { // nDelete has two child (happy family!)
@@ -541,8 +541,16 @@ public class AVLTree  {
 		IAVLNode mySuccessor = this.successor(nDelete); //finds the successor that will replace the deleted node
 		IAVLNode tmp = deleteRetrieve(mySuccessor);
 
+		if (tmp.getKey() == nDelete.getKey()){ // special case
+			tmp = mySuccessor;
+
+
+		}
+
 		if (nDelete == this.root) {  // root special case
-			this.root = mySuccessor;}
+			this.root = mySuccessor;
+			mySuccessor.setParent(null);}
+
 		else {							// updating my parent
 			mySuccessor.setParent(parent);
 
@@ -553,8 +561,11 @@ public class AVLTree  {
 		}
 		//replacing nDelete with his successor
 		mySuccessor.setLeft(nDelete.getLeft());
+		mySuccessor.getLeft().setParent(mySuccessor); // left cant be a digital / null
 		mySuccessor.setRight(nDelete.getRight());
-		mySuccessor.updateNode(); // updating successor by the new sons
+		mySuccessor.getRight().setParent(mySuccessor);// // right cant be a digital / null
+		mySuccessor.setSizeAlone(); // updating successor by the new sons
+		mySuccessor.setHeight(nDelete.getHeight()); // keeping old height of a node
 		return tmp;}
 
 
@@ -563,12 +574,15 @@ public class AVLTree  {
 
 		if (nDelete == this.root) {  // root special case
 			this.root = nDelete.getRight();
+			this.root.setParent(null);
 			return this.root;}
 		else if (nDelete.getKey() < parent.getKey()) { // nDelete is left child of parent
 			parent.setLeft(nDelete.getRight()); // byPass
+			parent.getLeft().setParent(parent);
 			return parent;}
 		else {        // nDelete is right child of parent
 			parent.setRight(nDelete.getRight()); // byPass
+			parent.getRight().setParent(parent);
 			return parent;
 		}}
 
@@ -577,32 +591,38 @@ public class AVLTree  {
 
 		if (nDelete == this.root) {  // root special case
 			this.root = nDelete.getLeft();
+			this.root.setParent(null);
 			return this.root;}
 
 		else if (nDelete.getKey() < parent.getKey()) { // nDelete is left child of parent
 			parent.setLeft(nDelete.getLeft()); // byPass
+			parent.getLeft().setParent(parent);
 			return parent;}
 
 		else {        // nDelete is right child of parent
 			parent.setRight(nDelete.getLeft()); // byPass
+			parent.getRight().setParent(parent);
 			return parent;}}
 
 
 
 
 	private IAVLNode deleteRetrieveLeaf(IAVLNode nDelete) { // delete & retrieve node to be balanced for node that is a Leaf
-		IAVLNode parent = nDelete.getParent();
 
 		if (nDelete == this.root) {  // root special case
 			this.root = null;
 			return null;}
 
-		else if (nDelete.getKey() < parent.getKey()) { // nDelete is left child of parent
+		IAVLNode parent = nDelete.getParent();
+
+		if (nDelete.getKey() < parent.getKey()) { // nDelete is left child of parent
 			parent.setLeft(nDelete.getLeft()); // byPass
+			parent.getLeft().setParent(parent);
 			return parent;}
 
 		else {        // nDelete is right child of parent
 			parent.setRight(nDelete.getRight()); // byPass
+			parent.getRight().setParent(parent);
 			return parent;
 		}}
 // till here sub function for the delete function
