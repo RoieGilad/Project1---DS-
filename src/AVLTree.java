@@ -15,6 +15,16 @@ public class AVLTree  {
 	private int Height;
 	private int size; //TODO NO NEED - SIZE OF THE TREE = ROOT.SIZE
 
+	public AVLTree(IAVLNode r) { // constructor for split
+		this.root = r;
+		this.min = myMin(r);
+		this.max = myMax(r);	}
+
+
+	public AVLTree() {}
+
+
+
 
 	/**
 	 * public boolean empty()
@@ -647,6 +657,15 @@ public class AVLTree  {
 			node = node.getLeft();}
 		return node;}
 
+
+	private IAVLNode myMax(IAVLNode node) {
+		while ( node.getRight().isRealNode()){
+			node = node.getRight();}
+		return node;}
+
+
+
+
 	
 	/**
 	 * public StringBe min()
@@ -718,9 +737,34 @@ public class AVLTree  {
 	 * precondition: search(x) != null (i.e. you can also assume that the tree is not empty)
 	 * postcondition: none
 	 */
-	public AVLTree[] split(int x)
-	{
-		return null;
+	public AVLTree[] split(int x){
+		IAVLNode X = this.find(x);
+		IAVLNode L = X.getLeft();
+		IAVLNode R = X.getRight();
+		IAVLNode parent = X.getParent();
+		IAVLNode newParent;
+		L.setParent(null);
+		R.setParent(null);
+		while (parent != null){ 							// move up till you reached the end
+			newParent = parent.getParent();					// save for later
+			parent.setParent(null);
+
+			if ( parent.getLeft().getKey() == X.getKey() ){ // left side join
+				parent.getRight().setParent(null);
+				R = join_in(R , parent , parent.getRight());
+				R.setParent(null);}
+
+			else {
+				parent.getLeft().setParent(null);
+				L = join_in(parent.getLeft(), parent, L);     // right side join
+				L.setParent(null);}
+
+			X = parent;										// moving up
+			parent = newParent;	}							// moving up
+
+		AVLTree left = new AVLTree(L);						 // updating all fields
+		AVLTree right = new AVLTree(R);						// updating all fields
+		return new AVLTree[]{left, right};
 	}
 
 
