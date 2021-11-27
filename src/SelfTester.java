@@ -22,7 +22,7 @@ public class SelfTester {
         Random rand = new Random();
         int cnt = 0 ;
         while ( !error && (cnt < reptitions)){
-        int intSplit = 1 + rand.nextInt(size);           // a random node X s.t. left.keys < X < right.keys for split & join
+        int intSplit = 1 + rand.nextInt(size-1);           // a random node X s.t. left.keys < X < right.keys for split & join
 
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
