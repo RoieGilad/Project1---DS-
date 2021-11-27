@@ -12,8 +12,6 @@ public class AVLTree  {
 	private IAVLNode root;
 	private IAVLNode min;
 	private IAVLNode max;
-	private int Height;
-	private int size; //TODO NO NEED - SIZE OF THE TREE = ROOT.SIZE
 
 	public AVLTree(IAVLNode r) { // constructor for split
 		this.root = r;
@@ -33,7 +31,7 @@ public class AVLTree  {
 	 *
 	 */
 	public boolean empty() {
-		return root == null ;// root == null iff the tree is empty
+		return (root == null || !root.isRealNode());// root == null iff the tree is empty
 	}
 
 
@@ -72,7 +70,6 @@ public class AVLTree  {
 			if (node.getParent() != null){
 				rebalance(node.getParent(), d+1); //counting 1 promotion
 			} else{
-				this.Height += 1; //dont need if we dont keep the hight sade
 				return d+1;
 			}
 
@@ -148,11 +145,10 @@ public class AVLTree  {
 	//main func
 	public int insert(int k, String i) { //TODO CHECK WHY WE INSERT SAME KEY TWICE
 		IAVLNode new_node = new AVLNode(k, i);
-		if (this.root == null) {
+		if (this.empty()) {
 			this.root = new_node;
 			this.min = new_node;
 			this.max = new_node;
-			this.size = 1;
 			return 0;
 		}
 
@@ -172,20 +168,12 @@ public class AVLTree  {
 		if (k > this.max.getKey()){ //update max
 			this.max = new_node;
 		}
-		this.size = this.size + 1;
 		int result =  rebalance(place_to_insert, 0); // d is the number of operations
 		updateTillRoot(place_to_insert); // if the rebalance isnt happening- the problem for size
 		return result;
 	}
 
 
-	//update size after deletion or insertion
-	private void node_size_maintain(IAVLNode bottom_node){
-		while (bottom_node.getParent() != null){
-			bottom_node.setSizeAlone();
-			bottom_node = bottom_node.getParent();
-		}
-	}
 
 	private void updateTillRoot(IAVLNode node){
 		while (node.getParent() != null){
@@ -241,7 +229,7 @@ public class AVLTree  {
 	 */
 	public int[] keysToArray()
 	{
-		int[] result = new int[this.size];
+		int[] result = new int[this.root.getSize()];
 		inorder_walk_key(this.root, 0, result);
 		return result;
 	}
@@ -255,7 +243,7 @@ public class AVLTree  {
 	 */
 	public String[] infoToArray()
 	{
-		String[] result = new String[this.size];
+		String[] result = new String[this.root.getSize()];
 		inorder_walk_val(this.root, 0, result);
 		return result;
 	}
@@ -417,13 +405,12 @@ public class AVLTree  {
 		if (nDelete == null){ return -1;} // if node wasn't found return -1
 
 		else{
-			if (this.size() > 1 ){ // updating min or max if necessary
+			if (this.root.getSize() > 1 ){ // updating min or max if necessary
 				if (nDelete.getKey() == this.min.getKey()){
 					this.min = this.successor(nDelete);}
 				if (nDelete.getKey() == this.max.getKey()){
 					this.max = this.predecessor(nDelete);}
 			}
-			size -= 1; //TODO whats that??
 			IAVLNode toBeRebalance = this.deleteRetrieve(nDelete); // delete nDelete and retrieve the node that rebalancing should start from
 
 			if (toBeRebalance == null){return 0;}
@@ -687,7 +674,7 @@ public class AVLTree  {
 	 */
 	public String min()
 	{
-		return (root == null) ? null : min.getValue();
+		return (this.empty()) ? null : min.getValue();
 	}
 
 	private IAVLNode find(int k){ // finding node with key = K
@@ -716,7 +703,7 @@ public class AVLTree  {
 	 */
 	public String max()
 	{
-		return (root == null) ? null : max.getValue();
+		return (this.empty()) ? null : max.getValue();
 	}
 
 
@@ -725,8 +712,8 @@ public class AVLTree  {
 	 *
 	 * Returns the number of nodes in the tree.
 	 */
-	public int size()
-	{
+	public int size(){
+		if (!this.root.isRealNode()){return 0;}
 		return root.getSize(); // to be replaced by student code
 	}
 
