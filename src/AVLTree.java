@@ -60,6 +60,9 @@ public class AVLTree  {
 
 	//second func for insert
 	private int rebalance(IAVLNode node, int d){
+		if (node == null){
+			return 0;
+		}
 		int left_dist = node.getRankLeft();
 		int right_dist = node.getRankRight();
 
@@ -267,14 +270,13 @@ public class AVLTree  {
 	 * postcondition: none
 	 */
 	public int join(IAVLNode x, AVLTree t) {
-		int h_1 = t.Height;
-		int h_2 = this.Height;
-		if (h_1 == -1 && h_2 == -1) { //both empty
+		if (t.empty() && this.empty()) { //both empty
 			this.root = x;
 			this.max = x;
 			this.min = x;
-			this.Height = 0; // 	TODO
-		} else if (h_2 == -1){ // this tree empty
+			return 1;
+		}
+		if (this.empty()){ // this tree empty
 			if (t.getRoot().getKey() > x.getKey()){
 				this.min = x;
 				this.max = t.max;
@@ -283,9 +285,10 @@ public class AVLTree  {
 				this.min = t.min;
 				this.max = x;
 				this.root = join_in(t.getRoot(), x, this.getRoot());
-
 			}
-		} else if (h_1 == -1){ // t tree is empty
+			return t.getRoot().getHeight()+1;
+		}
+		if (t.empty()){ // t tree is empty
 			if (this.getRoot().getKey() > x.getKey()){
 				this.min = x;
 				this.root = join_in(t.getRoot(), x, this.getRoot());
@@ -293,14 +296,17 @@ public class AVLTree  {
 				this.max = x;
 				this.root = join_in(this.getRoot(), x, t.getRoot());
 			}
+			return this.getRoot().getHeight()+1;
 		}
-		if (t.root.getKey() < x.getKey()) { //both not empty t is the smallest
+		else if (t.root.getKey() < x.getKey()) { //both not empty t is the smallest
 			this.min = t.min;
 			this.root = join_in(t.getRoot(), x, this.getRoot());
 		} else { //both not empty this is the smallest
 			this.max = t.max;
 			this.root = join_in(this.getRoot(), x, t.getRoot());
 		}
+		int h_1 = t.getRoot().getHeight();
+		int h_2 = this.getRoot().getHeight();
 		return Math.abs(h_1-h_2)+1;
 	}
 
@@ -308,14 +314,17 @@ public class AVLTree  {
 		// returns the root!! - the upper node! the join fix the empty cases- join_in takes non empty trees..
 		int h_1 = t1.getHeight();
 		int h_2 = t2.getHeight();
-		if (Math.abs(h_1-h_2) <= 1){ //the two trees almost equal - just attach x
-			X.setRight(t1);
-			t1.setParent(X);
-			X.setLeft(t2);
-			t2.setParent(X);
-			return X;
-		}
-		else if (h_1 < h_2){
+//		if (!t1.isRealNode() && !t2.isRealNode()){
+//			return X;
+//		}
+//		if (Math.abs(h_1-h_2) <= 1){ //the two trees almost equal - just attach x
+//			X.setRight(t1);
+//			t1.setParent(X);
+//			X.setLeft(t2);
+//			t2.setParent(X);
+//			return X;
+//		}
+		if (h_1 < h_2){
 			IAVLNode node_travel = t2;
 			while (node_travel.getHeight() > h_1){
 				node_travel = node_travel.getLeft();
@@ -340,6 +349,9 @@ public class AVLTree  {
 			X.setParent(parent_to_save);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
+			if (h_1==h_2){
+				return X;
+			}
 			return t1; //this is the new root
 		}
 	}
@@ -723,8 +735,9 @@ public class AVLTree  {
 	 *
 	 * Returns the root AVL node, or null if the tree is empty
 	 */
-	public IAVLNode getRoot()
-	{
+	public IAVLNode getRoot() {
+		if (!this.root.isRealNode()){
+			return null;}
 		return root;
 	}
 
