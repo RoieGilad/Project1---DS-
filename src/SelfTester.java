@@ -1,64 +1,35 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class SelfTester {
 
     public static void main(String[] args) {
 //        insertDeleteTester(11, 9,100 );
-//        joinSpliteTester(4 , 100);
-        int intSplit = 3;
-        List<Integer> numToInsertLeft = Arrays.asList(1,2);
-        List<Integer> numToInsertRight = Arrays.asList(13, 12, 11, 8, 15, 7, 5, 10, 9, 14, 16, 6, 4);
-        AVLTree left = new AVLTree();
-        AVLTree right = new AVLTree();
-        AVLTree treeInCheck = null;
-        for (int i : numToInsertLeft) { // creating left tree
-            left.insert(i, ""+i);}
+        joinSpliteTester(5 , 100);
 
-        for (int i : numToInsertRight) { // creating right tree
-            right.insert(i, ""+i);}
-
-        AVLTree.IAVLNode X = new AVLTree.AVLNode(intSplit , ""+intSplit);
-        left.join(X , right);
-        treeInCheck = left;
-        System.out.println(treeInCheck.size());
-        if (!SelfTester.checkBalanceOfTree(treeInCheck.getRoot())) {          // checking if the tree is balanced
-            System.out.println("error in join - in balanced" );
-        }
-        if (!SelfTester.checkOrderingOfTree(treeInCheck.getRoot())) {          // checking if the tree is a BST
-            System.out.println("error in join - in order");
-
-            if (!(treeInCheck.min().equals("1"))) {
-                System.out.println("error in join - in minimum");
-                if (!(treeInCheck.max().equals("" + 16))) {
-                    System.out.println("error in join - in maximum");
-                }
-                if (!(treeInCheck.size() == 16)) {
-                    System.out.println("error in join - in size");
-                }
-            }
-        }
 
     }
 
     private static void joinSpliteTester(int s, int reptitions) {
         int size =(int) Math.pow(2,s);
         boolean error = false;
-
-        Random rand = new Random();
-        int cnt = 0 ;
-        while ( !error && (cnt < reptitions)){
         ArrayList<Integer> numToInsert = new ArrayList<>();
         ArrayList<Integer> numToInsertLeft = new ArrayList<>();
         ArrayList<Integer> numToInsertRight = new ArrayList<>();
 
-        int intSplit = 1 + rand.nextInt(size);           // a random node X s.t. left.keys < X < right.keys for split & join
+        Random rand = new Random();
+        int cnt = 0 ;
+        while ( !error && (cnt < reptitions)){
+        int intSplit = 1 + rand.nextInt(size-1);           // a random node X s.t. left.keys < X < right.keys for split & join
 
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
 
             if (i+1 < intSplit ){                      // insert the low keys here
                 numToInsertLeft.add( i+1 );}
-            else if (i+1 > intSplit) {                     // intsplite stay in the side
+            if (intSplit < i +1 ){                     // intsplite stay in the side
                 numToInsertRight.add( i+1 );}           // insert the high key here
 
         }
@@ -66,10 +37,6 @@ public class SelfTester {
         Collections.shuffle(numToInsertLeft);
         Collections.shuffle(numToInsertRight);
         Collections.shuffle(numToInsert);
-        System.out.println(intSplit);
-        System.out.println(numToInsertLeft);
-        System.out.println(numToInsertRight);
-//        System.out.println(numToInsert);
 
         AVLTree left = new AVLTree();
         AVLTree right = new AVLTree();
@@ -103,9 +70,8 @@ public class SelfTester {
         if (!(treeInCheck.max().equals("" + size)) ){
             System.out.println("error in join - in maximum");
             error = true;}
-        System.out.println(treeInCheck.size());
         if ( !(treeInCheck.size() == size)){
-            System.out.println("error in join - in size");
+            System.out.println("error in join - in maximum");
             error = true;}
 
 
