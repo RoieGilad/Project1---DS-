@@ -6,8 +6,8 @@ import java.util.Random;
 public class SelfTester {
 
     public static void main(String[] args) {
- //       insertDeleteTester(15, 10,100 );
-        joinSpliteTester(5 , 100);
+        insertDeleteTester(11, 9,100 );
+  //      joinSpliteTester(5 , 100);
 
 
     }
@@ -130,10 +130,10 @@ public class SelfTester {
 
 
         public static void  insertDeleteTester(int s , int delete , int reptitions){
-    boolean errorDelete = false;
-    int rep_counter = 0;
+        boolean errorDelete = false;
+        int rep_counter = 0;
 
-        while (!errorDelete && reptitions < rep_counter ){                               // while there is no error - keep testing
+        while (!errorDelete && rep_counter < reptitions   ){                               // while there is no error - keep testing
         int size =(int) Math.pow(2,s);                     // set the size of your tree
         int numberOfDelete = (int) Math.pow(2,delete);          // set the number of delete
         ArrayList<Integer> numToInsert = new ArrayList<>();
