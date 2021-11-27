@@ -19,6 +19,7 @@ public class AVLTree  {
 		this.max = myMax(r);	}
 
 
+
 	public AVLTree() {}
 
 
@@ -32,6 +33,13 @@ public class AVLTree  {
 	 */
 	public boolean empty() {
 		return (root == null || !root.isRealNode());// root == null iff the tree is empty
+	}
+
+	public IAVLNode getMax() {
+		return this.max;
+	}
+	public IAVLNode getMin() {
+		return this.min;
 	}
 
 
@@ -265,32 +273,34 @@ public class AVLTree  {
 			return 1;
 		}
 		if (this.empty()){ // this tree empty
+			IAVLNode fictive_node = new AVLNode();
 			if (t.getRoot().getKey() > x.getKey()){
 				this.min = x;
-				this.max = t.max;
-				this.root = join_in(this.getRoot(), x, t.getRoot());
+				this.max = t.getMax();
+				this.root = join_in(fictive_node, x, t.getRoot());
 			} else {
-				this.min = t.min;
+				this.min = t.getMin();
 				this.max = x;
-				this.root = join_in(t.getRoot(), x, this.getRoot());
+				this.root = join_in(t.getRoot(), x, fictive_node);
 			}
 			return t.getRoot().getHeight()+1;
 		}
 		if (t.empty()){ // t tree is empty
+			IAVLNode fictive_node = new AVLNode();
 			if (this.getRoot().getKey() > x.getKey()){
 				this.min = x;
-				this.root = join_in(t.getRoot(), x, this.getRoot());
+				this.root = join_in(fictive_node, x, this.getRoot());
 			} else {
 				this.max = x;
-				this.root = join_in(this.getRoot(), x, t.getRoot());
+				this.root = join_in(this.getRoot(), x, fictive_node);
 			}
 			return this.getRoot().getHeight()+1;
 		}
-		else if (t.root.getKey() < x.getKey()) { //both not empty t is the smallest
-			this.min = t.min;
+		else if (t.getRoot().getKey() < x.getKey()) { //both not empty t is the smallest
+			this.min = t.getMin();
 			this.root = join_in(t.getRoot(), x, this.getRoot());
 		} else { //both not empty this is the smallest
-			this.max = t.max;
+			this.max = t.getMax();
 			this.root = join_in(this.getRoot(), x, t.getRoot());
 		}
 		int h_1 = t.getRoot().getHeight();
@@ -302,46 +312,62 @@ public class AVLTree  {
 		// returns the root!! - the upper node! the join fix the empty cases- join_in takes non empty trees..
 		int h_1 = t1.getHeight();
 		int h_2 = t2.getHeight();
-//		if (!t1.isRealNode() && !t2.isRealNode()){
-//			return X;
-//		}
-//		if (Math.abs(h_1-h_2) <= 1){ //the two trees almost equal - just attach x
-//			X.setRight(t1);
-//			t1.setParent(X);
-//			X.setLeft(t2);
-//			t2.setParent(X);
-//			return X;
-//		}
+		if (!t1.isRealNode() && !t2.isRealNode()){
+			return X;
+		}
+		if (h_1 == h_2){ //the two trees equal - just attach x
+			X.setLeft(t1);
+			t1.setParent(X);
+			X.setRight(t2);
+			t2.setParent(X);
+			X.updateNode();
+			return X;
+		}
 		if (h_1 < h_2){
+			X.setLeft(t1);
+			t1.setParent(X);
 			IAVLNode node_travel = t2;
+			IAVLNode saver = node_travel;
 			while (node_travel.getHeight() > h_1){
+				saver = node_travel;
 				node_travel = node_travel.getLeft();
 			}
-			IAVLNode parent_to_save = node_travel.getParent(); //save it to attach to x
-			X.setLeft(node_travel);
+			IAVLNode parent_to_save = saver; //save it to attach to x
+			X.setRight(node_travel);
 			node_travel.setParent(X);
 			parent_to_save.setLeft(X);
 			X.setParent(parent_to_save);
+			X.updateNode();
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
-			return t2; //this is the new root
+			return find_root(t2); //this is the new root
 		} else {
+			X.setRight(t2);
+			t2.setParent(X);
 			IAVLNode node_travel = t1;
+			IAVLNode saver = node_travel;
 			while (node_travel.getHeight() > h_2){
+				saver = node_travel;
 				node_travel = node_travel.getRight();
 			}
-			IAVLNode parent_to_save = node_travel.getParent(); //save it to attach to x
-			X.setRight(node_travel);
+			IAVLNode parent_to_save = saver; //save it to attach to x
+			X.setLeft(node_travel);
 			node_travel.setParent(X);
 			parent_to_save.setRight(X);
 			X.setParent(parent_to_save);
+			X.updateNode();
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
-			if (h_1==h_2){
-				return X;
-			}
-			return t1; //this is the new root
+			return find_root(t1); //this is the new root
 		}
+	}
+
+
+	private IAVLNode find_root(IAVLNode node){
+		while (node.getParent() != null){
+			node = node.getParent();
+		}
+		return node;
 	}
 
 
