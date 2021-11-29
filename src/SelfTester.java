@@ -6,8 +6,8 @@ import java.util.Random;
 public class SelfTester {
 
     public static void main(String[] args) {
-//        insertDeleteTester(11, 9,100 );
-        joinSpliteTester(5 , 100);
+        insertDeleteTester(14, 10,100 );
+ //       joinSpliteTester(5 , 100);
 
 
     }
