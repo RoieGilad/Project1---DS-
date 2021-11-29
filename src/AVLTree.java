@@ -8,7 +8,7 @@
  *
  */
 
-public class AVLTree  {
+public class AVLTree {
 	private IAVLNode root;
 	private IAVLNode min;
 	private IAVLNode max;
@@ -17,6 +17,7 @@ public class AVLTree  {
 		this.root = r;
 		this.min = myMin(r);
 		this.max = myMax(r);	}
+
 
 
 	public AVLTree() {}
@@ -32,6 +33,13 @@ public class AVLTree  {
 	 */
 	public boolean empty() {
 		return (root == null || !root.isRealNode());// root == null iff the tree is empty
+	}
+
+	public IAVLNode getMax() {
+		return this.max;
+	}
+	public IAVLNode getMin() {
+		return this.min;
 	}
 
 
@@ -78,13 +86,20 @@ public class AVLTree  {
 			IAVLNode z = node;
 			IAVLNode x = node.getLeft();
 			int left_left_dist = x.getRankLeft();
-			if (left_left_dist == 1) { // (1,2)
+			int left_right_dist = x.getRankRight();
+			if (left_left_dist == 1 && left_right_dist == 2) { // (1,2)
 				rotate_right(x,z);
 				z.updateNode(); //demote z + size
 				x.updateNode(); //update size
 				return d + 2; // one rotation, one demotion
 
-			} else { // (2,1) - double rotation
+			} else if (left_left_dist == 1 && left_right_dist ==1){ // need ??
+				rotate_right(x, z);
+				x.updateNode();
+				return d+1;
+			}
+
+			else { // (2,1) - double rotation
 				IAVLNode b = x.getRight();
 				rotate_left(x, b);
 				rotate_right(b, z);
@@ -99,13 +114,19 @@ public class AVLTree  {
 			IAVLNode z = node;
 			IAVLNode x = node.getRight();
 			int right_right_dist = x.getRankRight();
-			if (right_right_dist == 1) { //(2,1)
+			int right_left_dist = x.getRankLeft();
+			if (right_right_dist == 1 && right_left_dist == 2) { //(2,1)
 				rotate_left(z, x);
 				z.updateNode(); //demote z
 				x.updateNode();
 				return d + 2;
 
-			} else { //(1,2)
+			} else if (right_right_dist == 1 && right_left_dist ==1){ //?? need
+				rotate_left(z, x);
+				x.updateNode();
+				return d+1;
+			}
+			else { //(1,2)
 				IAVLNode b = x.getLeft();
 				rotate_right(b, x);
 				rotate_left(z, b);
@@ -265,32 +286,34 @@ public class AVLTree  {
 			return 1;
 		}
 		if (this.empty()){ // this tree empty
+			IAVLNode fictive_node = new AVLNode();
 			if (t.getRoot().getKey() > x.getKey()){
 				this.min = x;
-				this.max = t.max;
-				this.root = join_in(this.getRoot(), x, t.getRoot());
+				this.max = t.getMax();
+				this.root = join_in(fictive_node, x, t.getRoot());
 			} else {
-				this.min = t.min;
+				this.min = t.getMin();
 				this.max = x;
-				this.root = join_in(t.getRoot(), x, this.getRoot());
+				this.root = join_in(t.getRoot(), x, fictive_node);
 			}
 			return t.getRoot().getHeight()+1;
 		}
 		if (t.empty()){ // t tree is empty
+			IAVLNode fictive_node = new AVLNode();
 			if (this.getRoot().getKey() > x.getKey()){
 				this.min = x;
-				this.root = join_in(t.getRoot(), x, this.getRoot());
+				this.root = join_in(fictive_node, x, this.getRoot());
 			} else {
 				this.max = x;
-				this.root = join_in(this.getRoot(), x, t.getRoot());
+				this.root = join_in(this.getRoot(), x, fictive_node);
 			}
 			return this.getRoot().getHeight()+1;
 		}
-		else if (t.root.getKey() < x.getKey()) { //both not empty t is the smallest
-			this.min = t.min;
+		else if (t.getRoot().getKey() < x.getKey()) { //both not empty t is the smallest
+			this.min = t.getMin();
 			this.root = join_in(t.getRoot(), x, this.getRoot());
 		} else { //both not empty this is the smallest
-			this.max = t.max;
+			this.max = t.getMax();
 			this.root = join_in(this.getRoot(), x, t.getRoot());
 		}
 		int h_1 = t.getRoot().getHeight();
@@ -302,49 +325,79 @@ public class AVLTree  {
 		// returns the root!! - the upper node! the join fix the empty cases- join_in takes non empty trees..
 		int h_1 = t1.getHeight();
 		int h_2 = t2.getHeight();
-//		if (!t1.isRealNode() && !t2.isRealNode()){
-//			return X;
-//		}
-//		if (Math.abs(h_1-h_2) <= 1){ //the two trees almost equal - just attach x
-//			X.setRight(t1);
-//			t1.setParent(X);
-//			X.setLeft(t2);
-//			t2.setParent(X);
-//			return X;
-//		}
+		if (!t1.isRealNode() && !t2.isRealNode()){
+			return X;
+		}
+		if (h_1 == h_2){ //the two trees equal - just attach x
+			X.setLeft(t1);
+			t1.setParent(X);
+			X.setRight(t2);
+			t2.setParent(X);
+			X.updateNode();
+			return X;
+		}
 		if (h_1 < h_2){
+			X.setLeft(t1);
+			t1.setParent(X);
 			IAVLNode node_travel = t2;
+			IAVLNode saver = node_travel;
 			while (node_travel.getHeight() > h_1){
+				saver = node_travel;
 				node_travel = node_travel.getLeft();
 			}
-			IAVLNode parent_to_save = node_travel.getParent(); //save it to attach to x
-			X.setLeft(node_travel);
+			IAVLNode parent_to_save = saver; //save it to attach to x
+			X.setRight(node_travel);
 			node_travel.setParent(X);
 			parent_to_save.setLeft(X);
 			X.setParent(parent_to_save);
+			X.updateNode();
+			rebalance(X, 0);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
-			return t2; //this is the new root
+			return find_root(t2); //this is the new root
 		} else {
+			X.setRight(t2);
+			t2.setParent(X);
 			IAVLNode node_travel = t1;
+			IAVLNode saver = node_travel;
 			while (node_travel.getHeight() > h_2){
+				saver = node_travel;
 				node_travel = node_travel.getRight();
 			}
-			IAVLNode parent_to_save = node_travel.getParent(); //save it to attach to x
-			X.setRight(node_travel);
+			IAVLNode parent_to_save = saver; //save it to attach to x
+			X.setLeft(node_travel);
 			node_travel.setParent(X);
 			parent_to_save.setRight(X);
 			X.setParent(parent_to_save);
+			X.updateNode();
+			rebalance(X, 0);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
-			if (h_1==h_2){
-				return X;
-			}
-			return t1; //this is the new root
+			return find_root(t1); //this is the new root
 		}
 	}
 
 
+	private IAVLNode find_root(IAVLNode node){
+		while (node.getParent() != null){
+			node = node.getParent();
+		}
+		return node;
+	}
+
+	public static void printBinaryTree(IAVLNode root, int level){
+		if(root==null)
+			return;
+		printBinaryTree(root.getRight(), level+1);
+		if(level!=0){
+			for(int i=0;i<level-1;i++)
+				System.out.print("|\t");
+			System.out.println("|-------"+"("+root.getKey() + ") (S " + root.getSize() + " R " + root.getHeight() + " B " + ")");
+		}
+		else
+			System.out.println(root.getKey() + "(S " + root.getSize() + " R " + root.getHeight() + " B " +")");
+		printBinaryTree(root.getLeft(), level+1);
+	}
 
 
 

@@ -6,8 +6,8 @@ import java.util.Random;
 public class SelfTester {
 
     public static void main(String[] args) {
-        insertDeleteTester(14, 10,100 );
- //       joinSpliteTester(5 , 100);
+//        insertDeleteTester(11, 9,100 );
+        joinSpliteTester(5 , 100);
 
 
     }
@@ -15,15 +15,15 @@ public class SelfTester {
     private static void joinSpliteTester(int s, int reptitions) {
         int size =(int) Math.pow(2,s);
         boolean error = false;
-        ArrayList<Integer> numToInsert = new ArrayList<>();
-        ArrayList<Integer> numToInsertLeft = new ArrayList<>();
-        ArrayList<Integer> numToInsertRight = new ArrayList<>();
 
         Random rand = new Random();
         int cnt = 0 ;
         while ( !error && (cnt < reptitions)){
+            ArrayList<Integer> numToInsert = new ArrayList<>();
+            ArrayList<Integer> numToInsertLeft = new ArrayList<>();
+            ArrayList<Integer> numToInsertRight = new ArrayList<>();
         int intSplit = 1 + rand.nextInt(size-1);           // a random node X s.t. left.keys < X < right.keys for split & join
-
+            System.out.println(intSplit);
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
 
