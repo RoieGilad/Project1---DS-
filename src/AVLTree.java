@@ -8,7 +8,7 @@
  *
  */
 
-public class AVLTree  {
+public class AVLTree {
 	private IAVLNode root;
 	private IAVLNode min;
 	private IAVLNode max;
@@ -86,13 +86,20 @@ public class AVLTree  {
 			IAVLNode z = node;
 			IAVLNode x = node.getLeft();
 			int left_left_dist = x.getRankLeft();
-			if (left_left_dist == 1) { // (1,2)
+			int left_right_dist = x.getRankRight();
+			if (left_left_dist == 1 && left_right_dist == 2) { // (1,2)
 				rotate_right(x,z);
 				z.updateNode(); //demote z + size
 				x.updateNode(); //update size
 				return d + 2; // one rotation, one demotion
 
-			} else { // (2,1) - double rotation
+			} else if (left_left_dist == 1 && left_right_dist ==1){ // need ??
+				rotate_right(x, z);
+				x.updateNode();
+				return d+1;
+			}
+
+			else { // (2,1) - double rotation
 				IAVLNode b = x.getRight();
 				rotate_left(x, b);
 				rotate_right(b, z);
@@ -107,13 +114,19 @@ public class AVLTree  {
 			IAVLNode z = node;
 			IAVLNode x = node.getRight();
 			int right_right_dist = x.getRankRight();
-			if (right_right_dist == 1) { //(2,1)
+			int right_left_dist = x.getRankLeft();
+			if (right_right_dist == 1 && right_left_dist == 2) { //(2,1)
 				rotate_left(z, x);
 				z.updateNode(); //demote z
 				x.updateNode();
 				return d + 2;
 
-			} else { //(1,2)
+			} else if (right_right_dist == 1 && right_left_dist ==1){ //?? need
+				rotate_left(z, x);
+				x.updateNode();
+				return d+1;
+			}
+			else { //(1,2)
 				IAVLNode b = x.getLeft();
 				rotate_right(b, x);
 				rotate_left(z, b);
@@ -338,6 +351,7 @@ public class AVLTree  {
 			parent_to_save.setLeft(X);
 			X.setParent(parent_to_save);
 			X.updateNode();
+			rebalance(X, 0);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
 			return find_root(t2); //this is the new root
@@ -356,6 +370,7 @@ public class AVLTree  {
 			parent_to_save.setRight(X);
 			X.setParent(parent_to_save);
 			X.updateNode();
+			rebalance(X, 0);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
 			return find_root(t1); //this is the new root
@@ -370,7 +385,19 @@ public class AVLTree  {
 		return node;
 	}
 
-
+	public static void printBinaryTree(IAVLNode root, int level){
+		if(root==null)
+			return;
+		printBinaryTree(root.getRight(), level+1);
+		if(level!=0){
+			for(int i=0;i<level-1;i++)
+				System.out.print("|\t");
+			System.out.println("|-------"+"("+root.getKey() + ") (S " + root.getSize() + " R " + root.getHeight() + " B " + ")");
+		}
+		else
+			System.out.println(root.getKey() + "(S " + root.getSize() + " R " + root.getHeight() + " B " +")");
+		printBinaryTree(root.getLeft(), level+1);
+	}
 
 
 
