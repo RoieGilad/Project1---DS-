@@ -96,7 +96,11 @@ public class AVLTree {
 			} else if (left_left_dist == 1 && left_right_dist ==1){ // need ??
 				rotate_right(x, z);
 				x.updateNode();
-				return d+1;
+				if (node.getParent() != null){
+					rebalance(x.getParent(), d+2); //counting 1 promotion
+				} else{
+					return d+2;
+				}
 			}
 
 			else { // (2,1) - double rotation
@@ -124,7 +128,11 @@ public class AVLTree {
 			} else if (right_right_dist == 1 && right_left_dist ==1){ //?? need
 				rotate_left(z, x);
 				x.updateNode();
-				return d+1;
+				if (node.getParent() != null){
+					rebalance(x.getParent(), d+2); //counting 1 promotion
+				} else{
+					return d+2;
+				}
 			}
 			else { //(1,2)
 				IAVLNode b = x.getLeft();
@@ -351,7 +359,6 @@ public class AVLTree {
 			parent_to_save.setLeft(X);
 			X.setParent(parent_to_save);
 			X.updateNode();
-			rebalance(X, 0);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
 			return find_root(t2); //this is the new root
@@ -370,7 +377,6 @@ public class AVLTree {
 			parent_to_save.setRight(X);
 			X.setParent(parent_to_save);
 			X.updateNode();
-			rebalance(X, 0);
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
 			return find_root(t1); //this is the new root
