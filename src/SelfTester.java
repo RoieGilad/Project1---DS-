@@ -1,17 +1,16 @@
-import java.sql.Array;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 public class SelfTester {
 
     public static void main(String[] args) {
 //        insertDeleteTester(11, 9,100 );
-        joinSpliteTester(7 , 10000);
+        joinSpliteTester(5 , 100);
+
 
     }
-
-
-
 
     private static void joinSpliteTester(int s, int reptitions) {
         int size =(int) Math.pow(2,s);
@@ -24,6 +23,7 @@ public class SelfTester {
             ArrayList<Integer> numToInsertLeft = new ArrayList<>();
             ArrayList<Integer> numToInsertRight = new ArrayList<>();
         int intSplit = 1 + rand.nextInt(size-1);           // a random node X s.t. left.keys < X < right.keys for split & join
+            System.out.println(intSplit);
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
 
@@ -32,14 +32,11 @@ public class SelfTester {
             if (intSplit < i +1 ){                     // intsplite stay in the side
                 numToInsertRight.add( i+1 );}           // insert the high key here
 
-
         }
         // mixing the insert order
         Collections.shuffle(numToInsertLeft);
         Collections.shuffle(numToInsertRight);
         Collections.shuffle(numToInsert);
-//        System.out.println(numToInsertLeft);
-//        System.out.println(numToInsertRight);
 
         AVLTree left = new AVLTree();
         AVLTree right = new AVLTree();
@@ -58,6 +55,7 @@ public class SelfTester {
         else {
             right.join(X , left);
             treeInCheck = right ; }
+
         if (!SelfTester.checkBalanceOfTree(treeInCheck.getRoot())) {          // checking if the tree is balanced
             System.out.println("error in join - in balanced" );
             error = true;
