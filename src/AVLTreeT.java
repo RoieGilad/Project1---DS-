@@ -11,7 +11,8 @@ import java.util.Random;
  *
  */
 
-public class AVLTreeT  {
+
+public class AVLTreeT {
 
 	private int maximalJoin;
 	private int sumJoin;
@@ -19,10 +20,58 @@ public class AVLTreeT  {
 
 	public static void main(String[] args) {
 		// put the call fo the method in theoretic part here
-
-
+		firstQuestion();
 
 	}
+
+	private static int num_of_changes(ArrayList<Integer> lst){ //o(n^2) checks if i>j and a[i] < a[j]
+		int cnt = 0;
+		for (int j = 0; j < lst.size(); j++){
+			for (int i = j+1; i < lst.size(); i++){
+				if (lst.get(j) > lst.get(i)){
+					cnt += 1;
+				}
+			}
+		}
+		return cnt;
+	}
+
+
+	public static void firstQuestion() {
+		Random rand = new Random();
+		for (int i = 1; i <= 5; i++) {
+			ArrayList<Integer> from_max_to_min = new ArrayList<>();
+			int size = (int) (1000 * Math.pow(2, i));
+			System.out.println("the current size is" + size + " = 1000*2^" + i);
+			for (int k = size; k > 0; k--) {                 // insert all the numbers in to array-list
+				from_max_to_min.add(k);
+			}
+			System.out.println("num of changes in the ordered list: " + num_of_changes(from_max_to_min));
+			AVLTreeT ordered = new AVLTreeT();
+			int cost_of_search_ordered = 0;
+			for (int num: from_max_to_min){
+				cost_of_search_ordered += ordered.search_for_question1(num);
+				ordered.insert(num, "" + num);
+			}
+			System.out.println("num of search in the ordered list: " + cost_of_search_ordered);
+
+
+			Collections.shuffle(from_max_to_min);
+			System.out.println("num of changes in the shuffled list: " + num_of_changes(from_max_to_min));
+			AVLTreeT shuffle = new AVLTreeT();
+			int cost_of_search_shuffle = 0;
+			for (int num: from_max_to_min){
+				cost_of_search_shuffle += shuffle.search_for_question1(num);
+				shuffle.insert(num, "" + num);
+			}
+			System.out.println("num of search in the shuffled list: " + cost_of_search_shuffle);
+
+		}
+	}
+
+
+
+
 	private IAVLNodeT root;
 	private IAVLNodeT min;
 	private IAVLNodeT max;
@@ -92,12 +141,38 @@ public class AVLTreeT  {
 	}
 
 
+	private int search_for_question1(int k) { //the last node to insert
+		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
+		IAVLNodeT search = this.max;
+		if (search == null){
+			return 0;
+		}
+		IAVLNodeT position = search;
+		int cnt = 0;
+		while (search.isRealNode()){
+			position = search;
+			cnt += 1;
+			if (search.getKey() < k){
+				search = search.getRight();
+			}
+			else if (search.getParent() != null && search.getParent().getRight() == search && search.getParent().getKey() > k){
+				search = search.getParent();
+			} else{
+				search = search.getLeft();
+			}
+		}
+		return cnt;
+	}
+
+
+
+
 	//insert!!
 //first func for insert
-	private IAVLNodeT place_to_insert(IAVLNodeT node) { //the last node to insert
+	private AVLTreeT.IAVLNodeT place_to_insert(AVLTreeT.IAVLNodeT node) { //the last node to insert
 		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
-		IAVLNodeT search = this.root;
-		IAVLNodeT place = search; //always not null
+		AVLTreeT.IAVLNodeT search = this.root;
+		AVLTreeT.IAVLNodeT place = search; //always not null
 		while (search.isRealNode()) { // TODO	 CHECK IF ISREALNODE WAS THE ONLY PROBLEM
 			place = search;
 			if (search.getKey() == node.getKey()){
@@ -177,27 +252,24 @@ public class AVLTreeT  {
 	}
 
 	//third func for insert
-	private void rotate_right(IAVLNodeT left_child, IAVLNodeT node){ //gets (x,z) x is the left child of z, changes between them
+	private void rotate_right(IAVLNodeT left_child, IAVLNodeT node) { //gets (x,z) x is the left child of z, changes between them
 		node.setLeft(left_child.getRight()); // z left child is b
 		node.getLeft().setParent(node); // b's father is z
-		if (node.getParent() != null){ //update the parent
+		if (node.getParent() != null) { //update the parent
 
-			if (node.getParent().getKey() > node.getKey()){ //checks if the parent child is left or right
+			if (node.getParent().getKey() > node.getKey()) { //checks if the parent child is left or right
 				node.getParent().setLeft(left_child);
 			} else {
 				node.getParent().setRight(left_child);
 			}
 
-		} else{
+		} else {
 			this.root = left_child; //can be a problem with join_in- there is no tree //TODO ????
 		}
 		left_child.setParent(node.getParent());  //attach the new child to the parent
 		left_child.setRight(node); // z is right child of x
 		node.setParent(left_child); // x is father of z
-
 	}
-
-
 
 	//main func
 	public int insert(int k, String i) { //TODO CHECK WHY WE INSERT SAME KEY TWICE
