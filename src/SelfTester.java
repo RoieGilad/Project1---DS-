@@ -7,7 +7,7 @@ public class SelfTester {
 
     public static void main(String[] args) {
 //        insertDeleteTester(11, 9,100 );
-        joinSpliteTester(5 , 100);
+        joinSpliteTester(6 , 100);
 
 
     }
@@ -23,7 +23,7 @@ public class SelfTester {
             ArrayList<Integer> numToInsertLeft = new ArrayList<>();
             ArrayList<Integer> numToInsertRight = new ArrayList<>();
         int intSplit = 1 + rand.nextInt(size-1);           // a random node X s.t. left.keys < X < right.keys for split & join
-            System.out.println(intSplit);
+//            System.out.println(intSplit);
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
 
