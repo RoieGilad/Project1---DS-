@@ -7,49 +7,6 @@ public class SelfTester {
     public static void main(String[] args) {
 //        insertDeleteTester(11, 9,100 );
         joinSpliteTester(7 , 10000);
-//        List<Integer> numToInsertLeft = Arrays.asList(1) ;
-//        List<Integer> numToInsertRight = Arrays.asList(12, 6, 10, 7, 8, 11, 16, 4, 9, 5, 13, 14, 15, 3);
-//        AVLTree.IAVLNode X = new AVLTree.AVLNode(2, ""+2);
-//        int size = 16;
-//        AVLTree left = new AVLTree();
-//        AVLTree right = new AVLTree();
-//        for (Integer num: numToInsertLeft){
-//            left.insert(num, ""+ num);
-//        }
-//
-//
-//        for (Integer num: numToInsertRight){
-//            right.insert(num, ""+ num);
-//        }
-//
-//        right.join(X, left);
-//
-//        AVLTree treeInCheck = right;
-//
-//        if (!SelfTester.checkBalanceOfTree(treeInCheck.getRoot())) {          // checking if the tree is balanced
-//            System.out.println("error in join - in balanced" );
-//
-//        }
-//
-//        if (!SelfTester.checkOrderingOfTree(treeInCheck.getRoot())) {          // checking if the tree is a BST
-//            System.out.println("error in join - in order");
-//        }
-
-//
-//        if (!(treeInCheck.min().equals("1")) ) {
-//            System.out.println("error in join - in minimum");
-//        }
-//
-//        if (!(treeInCheck.max().equals("" + size)) ) {
-//            System.out.println("error in join - in maximum");
-//        }
-//
-//        if ( !(treeInCheck.size() == size)) {
-//            System.out.println("error in join - in maximum");
-//        }
-//
-//
-
 
     }
 
