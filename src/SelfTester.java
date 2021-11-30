@@ -1,15 +1,46 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SelfTester {
 
     public static void main(String[] args) {
 //        insertDeleteTester(11, 9,100 );
-        joinSpliteTester(15 , 1000);
+//        joinSpliteTester(15 , 1000);
+        in_order_tester(7,1000);
 
 
+    }
+
+    private static void in_order_tester(int s, int repetitions) {
+        int size = (int) Math.pow(2, s);
+        boolean error = false;
+
+        Random rand = new Random();
+        int cnt = 0;
+        while (!error && (cnt < repetitions)) {
+            ArrayList<Integer> numToInsert = new ArrayList<>();
+            for (int i = 0; i < size; i++) {                 // insert all the numbers in to array-list
+                numToInsert.add(i + 1);
+            }
+            Collections.shuffle(numToInsert);
+            AVLTree tree = new AVLTree();
+            for (int num : numToInsert) {
+                tree.insert(num, "" + num);
+            }
+            int[] L = tree.keysToArray();
+            String[] M = tree.infoToArray();
+            for (int i = 0; i < size; i++) {
+                if (L[i] != i + 1) {
+                    System.out.println("error in keysToArray");
+                    error = true;
+                }
+                String k = Integer.toString(i+1);
+                if (!M[i].equals(k)) {
+                    System.out.println("error in infoToArray");
+                    error = true;
+                }
+            }
+            cnt += 1;
+        }
     }
 
     private static void joinSpliteTester(int s, int reptitions) {
