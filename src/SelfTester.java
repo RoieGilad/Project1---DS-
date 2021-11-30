@@ -6,11 +6,17 @@ import java.util.Random;
 public class SelfTester {
 
     public static void main(String[] args) {
-//        insertDeleteTester(11, 9,100 );
-        joinSpliteTester(15 , 1000);
+        insertDeleteTester(10, 10,10 );
+        joinSpliteTester(10 , 10);
 
 
     }
+
+
+
+
+
+
 
     private static void joinSpliteTester(int s, int reptitions) {
         int size =(int) Math.pow(2,s);
@@ -137,12 +143,12 @@ public class SelfTester {
 
         while (!errorDelete && rep_counter < reptitions   ){                               // while there is no error - keep testing
         int size =(int) Math.pow(2,s);                     // set the size of your tree
-        int numberOfDelete = (int) Math.pow(2,delete);          // set the number of delete
+        int numberOfDelete = (int) Math.pow(2,delete) -1;         // set the number of delete
         ArrayList<Integer> numToInsert = new ArrayList<>();
-        for (int i = 0; i < size - 1; i++) {                 // insert all the numbers in to array-list
+        for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
         }
-        numToInsert.add(size - 1);                           // double insert
+ //       numToInsert.add(size - 1);                           // double insert
         Collections.shuffle(numToInsert);                    // make the list in a random order
         //      System.out.println(numToInsert);                  // print the list if you want
         AVLTree testing = new AVLTree();
@@ -160,9 +166,9 @@ public class SelfTester {
         //    System.out.println(testing.size());
         //     System.out.println(testing.getRoot().getHeight());
 
-        if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
+        if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
             System.out.println("error in insert - in balanced" );}
-        if (!SelfTester.checkOrderingOfTree(testing.getRoot())){          // checking if the tree is a BST
+        if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){          // checking if the tree is a BST
             System.out.println("error in insert - in order" );}
 
 
@@ -176,13 +182,14 @@ public class SelfTester {
         for (int i : numToInsert) {
             //      System.out.println(i);                                         // if you want to see the number that is being deleted
             testing.delete(i);
+   //         System.out.println(i);
             cnt++;
 
-            if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {           // checking if the tree is balanced
+            if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {           // checking if the tree is balanced
                 errorDelete = true;
                 System.out.println("error in delete" + i +"- balanced"); }
 
-            if (!SelfTester.checkOrderingOfTree(testing.getRoot())){
+            if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){
                 errorDelete = true;
                 System.out.println("error in delete  - in order" + i);}    // checking if the tree is a BST
             // print

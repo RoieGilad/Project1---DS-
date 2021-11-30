@@ -774,7 +774,7 @@ public class AVLTree {
 	 * Returns the number of nodes in the tree.
 	 */
 	public int size(){
-		if (!this.root.isRealNode()){return 0;}
+		if (this.empty()){return 0;}
 		return root.getSize(); // to be replaced by student code
 	}
 
@@ -800,13 +800,6 @@ public class AVLTree {
 	 */
 	public AVLTree[] split(int x){
 
-//		if ( x < this.min.getKey()){
-//			AVLTree left = new AVLTree();
-//			return new AVLTree[]{left , this};}
-//
-//		if (x > this.max.getKey()){
-//			AVLTree right = new AVLTree();
-//			return new AVLTree[]{this , right};}
 
 		IAVLNode digital = new AVLNode();
 		IAVLNode X = this.find(x);
