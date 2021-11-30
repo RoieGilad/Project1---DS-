@@ -7,7 +7,7 @@ public class SelfTester {
 
     public static void main(String[] args) {
 //        insertDeleteTester(11, 9,100 );
-        joinSpliteTester(6 , 100);
+        joinSpliteTester(15 , 1000);
 
 
     }
@@ -22,8 +22,8 @@ public class SelfTester {
             ArrayList<Integer> numToInsert = new ArrayList<>();
             ArrayList<Integer> numToInsertLeft = new ArrayList<>();
             ArrayList<Integer> numToInsertRight = new ArrayList<>();
-        int intSplit = 1 + rand.nextInt(size-1);           // a random node X s.t. left.keys < X < right.keys for split & join
-//            System.out.println(intSplit);
+        int intSplit = 1 + rand.nextInt(size);           // a random node X s.t. left.keys < X < right.keys for split & join
+           System.out.println("the splitter / join index is " + intSplit);
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
 
@@ -76,53 +76,55 @@ public class SelfTester {
 
 
         // test split
-//        AVLTree mainTree = new AVLTree();
-//
-//        for (int i : numToInsert) { // creating left tree
-//            mainTree.insert(i, ""+i);}
-//
-//        AVLTree[] arr = mainTree.split(intSplit); // lets split
-//        AVLTree leftTree = arr[0];
-//        AVLTree rightTree = arr[1];
-//
-//        if (!SelfTester.checkBalanceOfTree(leftTree.getRoot())) {          // checking if the tree is balanced
-//            System.out.println("error in left tree split - in balanced" );
-//            error = true;
-//        }
-//        if (!SelfTester.checkOrderingOfTree(leftTree.getRoot())){          // checking if the tree is a BST
-//            System.out.println("error in left tree split - in order" );
-//            error = true;}
-//
-//        if (!(leftTree.min().equals("1")) ){
-//            System.out.println("the current minimum is " + leftTree.min());
-//            System.out.println("error in left tree in split - in minimum");
-//            error = true;}
-//        if (!(leftTree.max().equals("" + (intSplit - 1))) ){
-//            System.out.println("error in left tree in split - in maximum");
-//            error = true;}
-//        if ( !(leftTree.size() == (intSplit - 1))){
-//            System.out.println("error in left tree in split - in maximum");
-//            error = true;}
-//
-//
-//        if (!SelfTester.checkBalanceOfTree(rightTree.getRoot())) {          // checking if the tree is balanced
-//            System.out.println("error in right tree split - in balanced" );
-//            error = true;
-//        }
-//        if (!SelfTester.checkOrderingOfTree(rightTree.getRoot())){          // checking if the tree is a BST
-//            System.out.println("error in right tree split - in order" );
-//            error = true;}
-//
-//        if (!(rightTree.min().equals(("" + (intSplit + 1)))) ){
-//            System.out.println("the current minimum is " + rightTree.min());
-//            System.out.println("error in right tree in split - in minimum");
-//            error = true;}
-//        if (!(rightTree.max().equals("" + size) )){
-//            System.out.println("error in right tree in split - in maximum");
-//            error = true;}
-//        if ( !(rightTree.size() == (size - intSplit))){
-//            System.out.println("error in right tree split - in maximum");
-//            error = true;}
+        AVLTree mainTree = new AVLTree();
+//        System.out.println(numToInsert);
+        int[] insert = {1, 6, 2, 7, 4, 8, 5, 3};
+        intSplit = 8;
+        for (int i : numToInsert) { // creating left tree
+            mainTree.insert(i, ""+i);}
+
+        AVLTree[] arr = mainTree.split(intSplit); // lets split
+        AVLTree leftTree = arr[0];
+        AVLTree rightTree = arr[1];
+
+        if (leftTree.getRoot() != null && !SelfTester.checkBalanceOfTree(leftTree.getRoot())) {          // checking if the tree is balanced
+            System.out.println("error in left tree split - in balanced" );
+            error = true;
+        }
+        if (leftTree.getRoot() != null && !SelfTester.checkOrderingOfTree(leftTree.getRoot())){          // checking if the tree is a BST
+            System.out.println("error in left tree split - in order" );
+            error = true;}
+
+        if (leftTree.getRoot() != null && !(leftTree.min().equals("1")) ){
+            System.out.println("the current minimum is " + leftTree.min());
+            System.out.println("error in left tree in split - in minimum");
+            error = true;}
+        if (leftTree.getRoot() != null && !(leftTree.max().equals("" + (intSplit - 1))) ){
+            System.out.println("error in left tree in split - in maximum");
+            error = true;}
+        if (leftTree.getRoot() != null && !(leftTree.size() == (intSplit - 1))){
+            System.out.println("error in left tree in split - in size");
+            error = true;}
+
+
+        if (rightTree.getRoot() != null && !SelfTester.checkBalanceOfTree(rightTree.getRoot())) {          // checking if the tree is balanced
+            System.out.println("error in right tree split - in balanced" );
+            error = true;
+        }
+        if (rightTree.getRoot() != null && !SelfTester.checkOrderingOfTree(rightTree.getRoot())){          // checking if the tree is a BST
+            System.out.println("error in right tree split - in order" );
+            error = true;}
+
+        if (rightTree.getRoot() != null && !(rightTree.min().equals(("" + (intSplit + 1)))) ){
+            System.out.println("the current minimum is " + rightTree.min());
+            System.out.println("error in right tree in split - in minimum");
+            error = true;}
+        if (rightTree.getRoot() != null && !(rightTree.max().equals("" + size) )){
+            System.out.println("error in right tree in split - in maximum");
+            error = true;}
+        if (rightTree.getRoot() != null && !(rightTree.size() == (size - intSplit))){
+            System.out.println("error in right tree split - in size");
+            error = true;}
 
         cnt++;
         }}

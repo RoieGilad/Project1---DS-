@@ -32,7 +32,7 @@ public class AVLTree {
 	 *
 	 */
 	public boolean empty() {
-		return (root == null || !root.isRealNode());// root == null iff the tree is empty
+		return (root == null || !root.isRealNode());// root == null or root is digital iff the tree is empty
 	}
 
 	public IAVLNode getMax() {
@@ -711,14 +711,16 @@ public class AVLTree {
 
 
 	private IAVLNode myMin(IAVLNode node) { // finding the most minimum node in my sub tree
-		while (node.getLeft().isRealNode()){ // go left if you can
-			node = node.getLeft();}
+		if (node.isRealNode()){
+			while (node.getLeft().isRealNode()){ // go left if you can
+				node = node.getLeft();}}
 		return node;}
 
 
-	private IAVLNode myMax(IAVLNode node) {
-		while ( node.getRight().isRealNode()){
-			node = node.getRight();}
+	private IAVLNode myMax(IAVLNode node) {  // finding the most maximal node in my sub tree
+		if (node.isRealNode()){
+		while ( node.getRight().isRealNode()){ // go right if you can
+			node = node.getRight();}}
 		return node;}
 
 
@@ -782,7 +784,7 @@ public class AVLTree {
 	 * Returns the root AVL node, or null if the tree is empty
 	 */
 	public IAVLNode getRoot() {
-		if (!this.root.isRealNode()){
+		if (this.empty()){
 			return null;}
 		return root;
 	}
@@ -797,6 +799,16 @@ public class AVLTree {
 	 * postcondition: none
 	 */
 	public AVLTree[] split(int x){
+
+//		if ( x < this.min.getKey()){
+//			AVLTree left = new AVLTree();
+//			return new AVLTree[]{left , this};}
+//
+//		if (x > this.max.getKey()){
+//			AVLTree right = new AVLTree();
+//			return new AVLTree[]{this , right};}
+
+		IAVLNode digital = new AVLNode();
 		IAVLNode X = this.find(x);
 		IAVLNode L = X.getLeft();
 		IAVLNode R = X.getRight();
@@ -810,19 +822,27 @@ public class AVLTree {
 
 			if ( parent.getLeft().getKey() == X.getKey() ){ // left side join
 				parent.getRight().setParent(null);
+				parent.setLeft(digital);
 				R = join_in(R , parent , parent.getRight());
+				R.updateNode();
 				R.setParent(null);}
 
 			else {
+				parent.setRight(digital);
 				parent.getLeft().setParent(null);
 				L = join_in(parent.getLeft(), parent, L);     // right side join
+				L.updateNode();
 				L.setParent(null);}
 
 			X = parent;										// moving up
 			parent = newParent;	}							// moving up
+	//	if (L == null){L = digital;}
+	//	if (R == null){ R = digital;}
 
 		AVLTree left = new AVLTree(L);						 // updating all fields
 		AVLTree right = new AVLTree(R);						// updating all fields
+		L.updateNode();
+		R.updateNode();
 		return new AVLTree[]{left, right};
 	}
 
@@ -947,11 +967,14 @@ public class AVLTree {
 
 		@Override
 		public void setHeightAlone() { //updating the height of a node
+			if ( !this.isRealNode()){return;}
 			this.Height = Math.max(this.Left.getHeight(), this.Right.getHeight()) +1;
 		}
 
 		@Override
-		public void setSizeAlone() { this.size = this.Left.getSize() + this.Right.getSize() + 1; }
+		public void setSizeAlone() {
+			if ( !this.isRealNode()){return;}
+			this.size = this.Left.getSize() + this.Right.getSize() + 1; }
 
 		public void updateNode(){
 			this.setHeightAlone();
