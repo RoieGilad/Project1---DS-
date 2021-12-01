@@ -867,8 +867,7 @@ public class AVLTreeT {
 	 * postcondition: none
 	 */
 	public AVLTreeT[] split(int x){
-
-
+		int currJoin = 0;
 		AVLTreeT.IAVLNodeT digital = new AVLTreeT.AVLNodeT();
 		AVLTreeT.IAVLNodeT X = this.find(x);
 		AVLTreeT.IAVLNodeT L = X.getLeft();
