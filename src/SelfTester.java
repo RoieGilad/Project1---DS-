@@ -1,13 +1,10 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class SelfTester {
 
     public static void main(String[] args) {
-        insertDeleteTester(10, 10,10 );
-        joinSpliteTester(10 , 10);
+        insertDeleteTester(11, 10,100 );
+        joinSpliteTester(10 , 100);
 
 
     }
@@ -28,8 +25,15 @@ public class SelfTester {
             ArrayList<Integer> numToInsert = new ArrayList<>();
             ArrayList<Integer> numToInsertLeft = new ArrayList<>();
             ArrayList<Integer> numToInsertRight = new ArrayList<>();
+
         int intSplit = 1 + rand.nextInt(size);           // a random node X s.t. left.keys < X < right.keys for split & join
+            if (cnt == 0){ // special case - no left tree
+                intSplit = 1;}
+            if (cnt == 1){ // special case - no right tree
+                intSplit = size; }
+
            System.out.println("the splitter / join index is " + intSplit);
+
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
 
@@ -84,14 +88,19 @@ public class SelfTester {
         // test split
         AVLTree mainTree = new AVLTree();
 //        System.out.println(numToInsert);
-        int[] insert = {1, 6, 2, 7, 4, 8, 5, 3};
-        intSplit = 8;
         for (int i : numToInsert) { // creating left tree
             mainTree.insert(i, ""+i);}
 
         AVLTree[] arr = mainTree.split(intSplit); // lets split
         AVLTree leftTree = arr[0];
         AVLTree rightTree = arr[1];
+        if (cnt == 0){
+            if ( !leftTree.empty()){
+                System.out.println("left tree in after split should be empty");}}
+        if (cnt == 1){
+                if ( !rightTree.empty()){
+                    System.out.println("right tree in after split should be empty");}}
+
 
         if (leftTree.getRoot() != null && !SelfTester.checkBalanceOfTree(leftTree.getRoot())) {          // checking if the tree is balanced
             System.out.println("error in left tree split - in balanced" );
@@ -138,72 +147,169 @@ public class SelfTester {
 
 
         public static void  insertDeleteTester(int s , int delete , int reptitions){
+
         boolean errorDelete = false;
+        boolean emptyCheck = false;
         int rep_counter = 0;
+
+        System.out.println("checking if your tree knows how to be an empty tree");
+        AVLTree empty = new AVLTree();
+
+            if (!(empty.min() == null )){
+                System.out.println("error in empty tree  - in minimum");
+                emptyCheck = true;}
+            if (!(empty.max() == null )){
+                System.out.println("error in empty tree - in maximum");
+                emptyCheck = true;}
+            if (!(empty.size() == 0)){
+                System.out.println("error in empty tree - in size");
+                emptyCheck = true;}
+            if ((!(empty.keysToArray().length == 0))){
+                System.out.println("error in empty tree - in keysToArray");
+                emptyCheck = true;}
+
+            if (!emptyCheck){ System.out.println("nice! your tree is empty Properly");}
+
+        System.out.println("LETS PLAY WITH YOUR TREE!");
 
         while (!errorDelete && rep_counter < reptitions   ){                               // while there is no error - keep testing
         int size =(int) Math.pow(2,s);                     // set the size of your tree
         int numberOfDelete = (int) Math.pow(2,delete) -1;         // set the number of delete
         ArrayList<Integer> numToInsert = new ArrayList<>();
+        int max = 0;
+        int min = size;
+        int sizeInCheck = 0;
         for (int i = 0; i < size ; i++) {                 // insert all the numbers in to array-list
             numToInsert.add(i + 1);
+
         }
  //       numToInsert.add(size - 1);                           // double insert
         Collections.shuffle(numToInsert);                    // make the list in a random order
         //      System.out.println(numToInsert);                  // print the list if you want
+
         AVLTree testing = new AVLTree();
+
         for (int i : numToInsert) {
             testing.insert(i, ""+i);
-//           if (i % 2 == 0) {                              // check every second insert that the tree is balanced
-//               if (!SelfTester.checkBalanceOfTree(testing.getRoot())) {
-//                   System.out.println("error in balance");
-        }
+            max = Math.max(i,max);
+            min = Math.min(i,min);
+            sizeInCheck++;
+            if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
+                System.out.println("error in insert - in balanced" );
+                errorDelete = true;
+            }
+            if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){          // checking if the tree is a BST
+                System.out.println("error in insert - in order" );
+                errorDelete = true;}
+
+            if (testing.getRoot() != null && !(testing.min().equals(("" + min))) ){
+                System.out.println("error in insert  - in minimum");
+                errorDelete = true;}
+            if (testing.getRoot() != null && !(testing.max().equals("" + max) )){
+                System.out.println("error in insert - in maximum");
+                errorDelete = true;}
+            if (testing.getRoot() != null && !(testing.size() == (sizeInCheck))){
+                System.out.println("error in insert - in size");
+                errorDelete = true;}}
 
 
-
-        //      System.out.println(testing.getRoot().getRight().getSize());        // insanity checks
-        //      System.out.println(testing.getRoot().getLeft().getSize());
-        //    System.out.println(testing.size());
-        //     System.out.println(testing.getRoot().getHeight());
-
-        if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
-            System.out.println("error in insert - in balanced" );}
-        if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){          // checking if the tree is a BST
-            System.out.println("error in insert - in order" );}
+//        if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
+//            System.out.println("error in insert - in balanced" );}
+//        if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){          // checking if the tree is a BST
+//            System.out.println("error in insert - in order" );}
 
 
 //            TreePrinter.print(testing.getRoot());
-        else {
+        if (!errorDelete){
             System.out.println("insert work");}
+
+// keys to array check after insert
+
+       int[] treeArr = testing.keysToArray();
+       Collections.sort(numToInsert);
+       int[] compare = new int[numToInsert.size()];
+       for (int i : numToInsert) {
+                compare[i-1] = i;}
+       if (!(Arrays.equals(treeArr, compare))){
+           System.out.println("problem in keys to array after insert");
+           errorDelete = true;}
+
+
+
+
+
+
+
 
         Collections.shuffle(numToInsert);                                 // shuffle the list again for random order in delete
         int[] numToDelete = {13,11};
         int cnt = 0;
+        ArrayList<Integer> copy = new ArrayList<>(numToInsert);
         for (int i : numToInsert) {
             //      System.out.println(i);                                         // if you want to see the number that is being deleted
             testing.delete(i);
-   //         System.out.println(i);
             cnt++;
+            sizeInCheck--;
 
-            if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {           // checking if the tree is balanced
-                errorDelete = true;
-                System.out.println("error in delete" + i +"- balanced"); }
 
-            if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){
-                errorDelete = true;
-                System.out.println("error in delete  - in order" + i);}    // checking if the tree is a BST
-            // print
+            copy.remove(copy.indexOf(i));
+            if (copy.size() > 0){
+            max = Collections.max(copy);
+            min = Collections.min(copy);}
+            if (testing.getRoot() != null && !(testing.size() == (sizeInCheck))){
+                System.out.println("error in delete - in size");
+                errorDelete = true;}
+
+            if (testing.size() > 0){
+
+                if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
+                    System.out.println("error in delete - in balanced" );
+                    errorDelete = true;}
+
+                if (testing.getRoot() != null && !SelfTester.checkOrderingOfTree(testing.getRoot())){          // checking if the tree is a BST
+                    System.out.println("error in delete - in order" );
+                    errorDelete = true;}
+
+                if (testing.getRoot() != null && !(testing.min().equals(("" + min))) ){
+                    System.out.println("error in delete - in minimum");
+                    errorDelete = true;}
+
+                if (testing.getRoot() != null && !(testing.max().equals("" + max) )){
+                    System.out.println("error in delete - in maximum");
+                    errorDelete = true;}
+            }
+
+
 
             if (cnt > numberOfDelete ){
                 break;}
         }
-        if (!errorDelete){
-            System.out.println("delete work");}
-        else{
-            System.out.println("delete failed");}
+        //check keys to array after delete
+            int[] treeArrD = testing.keysToArray();
+            Collections.sort(copy);
+            int[] compareD = new int[copy.size()];
+            int j = 0;
+            for (int i : copy) {
+                compareD[j] = i;
+                j++; }
+
+            if (!(Arrays.equals(treeArrD, compareD))){
+                System.out.println("problem in keys to array after delete");
+                errorDelete = true;}
+
+
+            if (!errorDelete){
+                System.out.println("delete work");}
+            else{
+                System.out.println("delete failed");
+                }
 
         rep_counter++;
     }}
+
+
+
+
     public static  boolean checkBalanceOfTree(AVLTree.IAVLNode current) {
         boolean balancedRight = true, balancedLeft = true;
         int leftHeight = 0, rightHeight = 0;
