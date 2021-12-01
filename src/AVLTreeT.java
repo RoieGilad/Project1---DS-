@@ -393,6 +393,7 @@ public class AVLTreeT {
 	 * precondition: keys(t) < x < keys() or keys(t) > x > keys(). t/tree might be empty (rank = -1).
 	 * postcondition: none
 	 */
+
 	public int join(IAVLNodeT x, AVLTreeT t) {
 		if (t.empty() && this.empty()) { //both empty
 			this.root = x;
@@ -434,52 +435,66 @@ public class AVLTreeT {
 		return Math.abs(h_1-h_2)+1;
 	}
 
-	private IAVLNodeT join_in(IAVLNodeT t1, IAVLNodeT X, IAVLNodeT t2){ //(left side- smallest, x, right side- biggest),
+	private AVLTreeT.IAVLNodeT join_in(AVLTreeT.IAVLNodeT t1, AVLTreeT.IAVLNodeT X, AVLTreeT.IAVLNodeT t2){ //(left side- smallest, x, right side- biggest),
 		// returns the root!! - the upper node! the join fix the empty cases- join_in takes non empty trees..
 		int h_1 = t1.getHeight();
 		int h_2 = t2.getHeight();
-//		if (!t1.isRealNode() && !t2.isRealNode()){
-//			return X;
-//		}
-//		if (Math.abs(h_1-h_2) <= 1){ //the two trees almost equal - just attach x
-//			X.setRight(t1);
-//			t1.setParent(X);
-//			X.setLeft(t2);
-//			t2.setParent(X);
-//			return X;
-//		}
+		if (!t1.isRealNode() && !t2.isRealNode()){
+			return X;
+		}
+		if (h_1 == h_2){ //the two trees equal - just attach x
+			X.setLeft(t1);
+			t1.setParent(X);
+			X.setRight(t2);
+			t2.setParent(X);
+			X.updateNode();
+			return X;
+		}
 		if (h_1 < h_2){
-			IAVLNodeT node_travel = t2;
+			X.setLeft(t1);
+			t1.setParent(X);
+			AVLTreeT.IAVLNodeT node_travel = t2;
+			AVLTreeT.IAVLNodeT saver = node_travel;
 			while (node_travel.getHeight() > h_1){
+				saver = node_travel;
 				node_travel = node_travel.getLeft();
 			}
-			IAVLNodeT parent_to_save = node_travel.getParent(); //save it to attach to x
-			X.setLeft(node_travel);
+			AVLTreeT.IAVLNodeT parent_to_save = saver; //save it to attach to x
+			X.setRight(node_travel);
 			node_travel.setParent(X);
 			parent_to_save.setLeft(X);
 			X.setParent(parent_to_save);
+			X.updateNode();
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
-			return t2; //this is the new root
+			return find_root(t2); //this is the new root
 		} else {
-			IAVLNodeT node_travel = t1;
+			X.setRight(t2);
+			t2.setParent(X);
+			AVLTreeT.IAVLNodeT node_travel = t1;
+			AVLTreeT.IAVLNodeT saver = node_travel;
 			while (node_travel.getHeight() > h_2){
+				saver = node_travel;
 				node_travel = node_travel.getRight();
 			}
-			IAVLNodeT parent_to_save = node_travel.getParent(); //save it to attach to x
-			X.setRight(node_travel);
+			AVLTreeT.IAVLNodeT parent_to_save = saver; //save it to attach to x
+			X.setLeft(node_travel);
 			node_travel.setParent(X);
 			parent_to_save.setRight(X);
 			X.setParent(parent_to_save);
+			X.updateNode();
 			rebalance(parent_to_save, 0);
 			updateTillRoot(X);
-			if (h_1==h_2){
-				return X;
-			}
-			return t1; //this is the new root
+			return find_root(t1); //this is the new root
 		}
 	}
 
+	private AVLTreeT.IAVLNodeT find_root(AVLTreeT.IAVLNodeT node){
+		while (node.getParent() != null){
+			node = node.getParent();
+		}
+		return node;
+	}
 
 
 
