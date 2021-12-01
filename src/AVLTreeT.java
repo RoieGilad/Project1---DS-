@@ -842,7 +842,7 @@ public class AVLTreeT {
 	 * Returns the number of nodes in the tree.
 	 */
 	public int size(){
-		if (!this.root.isRealNode()){return 0;}
+		if (this.empty()){return 0;}
 		return root.getSize(); // to be replaced by student code
 	}
 
@@ -852,7 +852,7 @@ public class AVLTreeT {
 	 * Returns the root AVL node, or null if the tree is empty
 	 */
 	public IAVLNodeT getRoot() {
-		if (!this.root.isRealNode()){
+		if (this.empty()){
 			return null;}
 		return root;
 	}
@@ -867,11 +867,13 @@ public class AVLTreeT {
 	 * postcondition: none
 	 */
 	public AVLTreeT[] split(int x){
-		IAVLNodeT X = this.find(x);
-		IAVLNodeT L = X.getLeft();
-		IAVLNodeT R = X.getRight();
-		IAVLNodeT parent = X.getParent();
-		IAVLNodeT newParent;
+		int currJoin = 0;
+		AVLTreeT.IAVLNodeT digital = new AVLTreeT.AVLNodeT();
+		AVLTreeT.IAVLNodeT X = this.find(x);
+		AVLTreeT.IAVLNodeT L = X.getLeft();
+		AVLTreeT.IAVLNodeT R = X.getRight();
+		AVLTreeT.IAVLNodeT parent = X.getParent();
+		AVLTreeT.IAVLNodeT newParent;
 		L.setParent(null);
 		R.setParent(null);
 		while (parent != null){ 							// move up till you reached the end
@@ -880,22 +882,29 @@ public class AVLTreeT {
 
 			if ( parent.getLeft().getKey() == X.getKey() ){ // left side join
 				parent.getRight().setParent(null);
+				parent.setLeft(digital);
 				R = join_in(R , parent , parent.getRight());
+				R.updateNode();
 				R.setParent(null);}
 
 			else {
+				parent.setRight(digital);
 				parent.getLeft().setParent(null);
 				L = join_in(parent.getLeft(), parent, L);     // right side join
+				L.updateNode();
 				L.setParent(null);}
 
 			X = parent;										// moving up
 			parent = newParent;	}							// moving up
+		//	if (L == null){L = digital;}
+		//	if (R == null){ R = digital;}
 
 		AVLTreeT left = new AVLTreeT(L);						 // updating all fields
 		AVLTreeT right = new AVLTreeT(R);						// updating all fields
+		L.updateNode();
+		R.updateNode();
 		return new AVLTreeT[]{left, right};
 	}
-
 
 
 
@@ -1017,18 +1026,19 @@ public class AVLTreeT {
 
 		@Override
 		public void setHeightAlone() { //updating the height of a node
+			if ( !this.isRealNode()){return;}
 			this.Height = Math.max(this.Left.getHeight(), this.Right.getHeight()) +1;
 		}
 
 		@Override
-		public void setSizeAlone() { this.size = this.Left.getSize() + this.Right.getSize() + 1; }
+		public void setSizeAlone() {
+			if ( !this.isRealNode()){return;}
+			this.size = this.Left.getSize() + this.Right.getSize() + 1; }
 
 		public void updateNode(){
 			this.setHeightAlone();
 			this.setSizeAlone();}
 
 
-	}
-
-}
+}}
   
