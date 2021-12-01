@@ -21,6 +21,7 @@ public class AVLTreeT {
 	public static void main(String[] args) {
 		// put the call fo the method in theoretic part here
 		firstQuestion();
+		secondQuestion();
 
 	}
 
@@ -34,6 +35,12 @@ public class AVLTreeT {
 			}
 		}
 		return cnt;
+	}
+	private  void updateNumJoin(IAVLNodeT node1 , IAVLNodeT node2){
+		int tmp = Math.abs((node1.getHeight() - node2.getHeight()));
+		this.sumJoin += tmp;
+		this.maximalJoin = Math.max(tmp , maximalJoin);
+		numJoin++;
 	}
 
 
@@ -883,6 +890,7 @@ public class AVLTreeT {
 			if ( parent.getLeft().getKey() == X.getKey() ){ // left side join
 				parent.getRight().setParent(null);
 				parent.setLeft(digital);
+				this.updateNumJoin(R , parent.getRight());
 				R = join_in(R , parent , parent.getRight());
 				R.updateNode();
 				R.setParent(null);}
@@ -890,6 +898,7 @@ public class AVLTreeT {
 			else {
 				parent.setRight(digital);
 				parent.getLeft().setParent(null);
+				this.updateNumJoin(parent.getLeft() , L);
 				L = join_in(parent.getLeft(), parent, L);     // right side join
 				L.updateNode();
 				L.setParent(null);}
