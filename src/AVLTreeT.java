@@ -21,6 +21,7 @@ public class AVLTreeT {
 	public static void main(String[] args) {
 		// put the call fo the method in theoretic part here
 		firstQuestion();
+		secondQuestion();
 
 	}
 
@@ -34,6 +35,12 @@ public class AVLTreeT {
 			}
 		}
 		return cnt;
+	}
+	private  void updateNumJoin(IAVLNodeT node1 , IAVLNodeT node2){
+		int tmp = Math.abs((node1.getHeight() - node2.getHeight()));
+		this.sumJoin += tmp;
+		this.maximalJoin = Math.max(tmp , maximalJoin);
+		numJoin++;
 	}
 
 
@@ -77,11 +84,13 @@ public class AVLTreeT {
 	private IAVLNodeT max;
 
 	public static void secondQuestion(){
+		System.out.println("Second question stats: ");
 		Random rand = new Random();
 		for (int i = 1 ; i <= 10 ; i++){
+			System.out.println();
 			ArrayList<Integer> numToInsert = new ArrayList<>();
 			int size = (int) (1000*Math.pow(2,i));
-			System.out.println("the current size is" + size + " = 1000*2^" + i);
+			System.out.println("the current size is " + size + " = 1000*2^" + i);
 			for (int k = 0; k < size ; k++) {                 // insert all the numbers in to array-list
 				numToInsert.add(k + 1);}
 
@@ -92,16 +101,15 @@ public class AVLTreeT {
 			for(int j : numToInsert){
 				random.insert(j , ""+j);
 				rootPredecessor.insert(j , ""+j);}
-
+			System.out.println();
 			System.out.println("random check:");
 			int intSplit = 1 + rand.nextInt(size-1);
 			System.out.println("the random key is " + intSplit);
-
+			System.out.println();
 			random.split(intSplit);
 			System.out.println("random - the maximal join was " + random.getMaximalJoin());
 			System.out.println("random - the average join was " + random.getAverageJoin());
-
-			System.out.println("maximum in the left subtree of the root check:");
+			System.out.println();
 			int x = rootPredecessor.predecessor(rootPredecessor.getRoot()).getKey();
 			System.out.println("the maximum key in the left subtree of the root is " + x);
 			rootPredecessor.split(x);
@@ -112,7 +120,7 @@ public class AVLTreeT {
 	}
 
 	private double getAverageJoin() {
-		return this.sumJoin / this.numJoin;	}
+		return ((double) this.sumJoin) / ((double) this.numJoin);	}
 
 	private int getMaximalJoin() {
 		return this.maximalJoin;
@@ -314,17 +322,15 @@ public class AVLTreeT {
 
 
 
-	private IAVLNodeT predecessor(IAVLNodeT node){
-		IAVLNodeT check;
+	private AVLTreeT.IAVLNodeT predecessor(AVLTreeT.IAVLNodeT node){
+		AVLTreeT.IAVLNodeT check;
 		if (node.getLeft().isRealNode()){
-			check = node.getLeft();
-			while (check.getRight() != null){
-				check = check.getRight();
-			}
-		} else{ //the successor is above
+			check = myMax(node.getLeft());
+		}
+		else{ //the successor is above
 			check = node.getParent();
 		}
-		while (check.isRealNode() && check.getKey() > node.getKey()) {
+		while (check == null && check.getKey() > node.getKey()) {
 			check = check.getParent();
 		}
 		return check;
@@ -898,6 +904,7 @@ public class AVLTreeT {
 			if ( parent.getLeft().getKey() == X.getKey() ){ // left side join
 				parent.getRight().setParent(null);
 				parent.setLeft(digital);
+				this.updateNumJoin(R , parent.getRight());
 				R = join_in(R , parent , parent.getRight());
 				R.updateNode();
 				R.setParent(null);}
@@ -905,6 +912,7 @@ public class AVLTreeT {
 			else {
 				parent.setRight(digital);
 				parent.getLeft().setParent(null);
+				this.updateNumJoin(parent.getLeft() , L);
 				L = join_in(parent.getLeft(), parent, L);     // right side join
 				L.updateNode();
 				L.setParent(null);}

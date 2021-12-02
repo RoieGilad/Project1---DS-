@@ -3,7 +3,7 @@
  *
  * AVLTree
  *
- * An implementation of aמ AVL Tree with
+ * An implementation of a AVL Tree with
  * distinct integer keys and info.
  *
  */
