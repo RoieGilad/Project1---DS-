@@ -49,6 +49,7 @@ public class AVLTree {
 
 	//insert!!
 //first func for insert
+	// Time complexity O(log(this.size()))
 	private IAVLNode place_to_insert(IAVLNode node) { //the last node to insert
 		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
 		IAVLNode search = this.root;
@@ -69,6 +70,7 @@ public class AVLTree {
 	}
 
 	//second func for insert
+	// Time complexity O(log(this.size()))
 	private int rebalance(IAVLNode node, int d){
 		if (node == null){
 			return 0;
@@ -339,6 +341,7 @@ public class AVLTree {
 		return Math.abs(h_1-h_2)+1;
 	}
 
+	// Time complexity O(log(|this.size()-t.size()|+1))
 	private IAVLNode join_in(IAVLNode t1, IAVLNode X, IAVLNode t2){ //(left side- smallest, x, right side- biggest),
 		// returns the root!! - the upper node! the join fix the empty cases- join_in takes non empty trees..
 		int h_1 = t1.getHeight();
@@ -393,28 +396,13 @@ public class AVLTree {
 		}
 	}
 
-
+	// Time complexity O(log(|this.size()-t.size()|+1))
 	private IAVLNode find_root(IAVLNode node){
 		while (node.getParent() != null){
 			node = node.getParent();
 		}
 		return node;
 	}
-
-//	public static void printBinaryTree(IAVLNode root, int level){
-//		if(root==null)
-//			return;
-//		printBinaryTree(root.getRight(), level+1);
-//		if(level!=0){
-//			for(int i=0;i<level-1;i++)
-//				System.out.print("|\t");
-//			System.out.println("|-------"+"("+root.getKey() + ") (S " + root.getSize() + " R " + root.getHeight() + " B " + ")");
-//		}
-//		else
-//			System.out.println(root.getKey() + "(S " + root.getSize() + " R " + root.getHeight() + " B " +")");
-//		printBinaryTree(root.getLeft(), level+1);
-//	}
-
 
 
 
