@@ -84,7 +84,7 @@ public class SelfTester {
             System.out.println("error in join - in maximum");
             error = true;}
 
-
+        if (!error){System.out.println(" join worked ");}
         // test split
         AVLTree mainTree = new AVLTree();
 //        System.out.println(numToInsert);
@@ -141,6 +141,7 @@ public class SelfTester {
             System.out.println("error in right tree split - in size");
             error = true;}
 
+        if (!error){System.out.println(" split worked ");}
         cnt++;
         }}
 
