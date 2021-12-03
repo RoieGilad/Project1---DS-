@@ -153,10 +153,10 @@ public class AVLTreeT {
 		// - returns the parent or the node itself if the key already exists, dont call this func if the node is null
 		IAVLNodeT search = this.max;
 		if (search == null){
-			return 0;
+			return 1;
 		}
 		IAVLNodeT position = search;
-		int cnt = 0;
+		int cnt = 1;
 		while (search.isRealNode()){
 			position = search;
 			cnt += 1;
