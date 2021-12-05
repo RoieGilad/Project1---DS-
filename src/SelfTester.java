@@ -3,8 +3,8 @@ import java.util.*;
 public class SelfTester {
 
     public static void main(String[] args) {
- //       insertDeleteTester(11, 10,100000 );
-        joinSpliteTester(10 , 100000);
+        insertDeleteTester(5, 5,10 );
+        joinSpliteTester(5 , 10);
 
 
     }
@@ -56,15 +56,16 @@ public class SelfTester {
 
         for (int i : numToInsertRight) { // creating right tree
             right.insert(i, ""+i);}
-
+        int cost = 0;
         AVLTree.IAVLNode X = new AVLTree.AVLNode(intSplit , ""+intSplit);
         double coin = rand.nextFloat();
         if (coin < 0.5){
-            left.join(X , right);
+             cost = left.join(X , right);
             treeInCheck = left; }
         else {
-            right.join(X , left);
+             cost = right.join(X , left);
             treeInCheck = right ; }
+        System.out.println("the cost of this join is " + cost);
 
         if (!SelfTester.checkBalanceOfTree(treeInCheck.getRoot())) {          // checking if the tree is balanced
             System.out.println("error in join - in balanced" );
@@ -187,14 +188,16 @@ public class SelfTester {
  //       numToInsert.add(size - 1);                           // double insert
         Collections.shuffle(numToInsert);                    // make the list in a random order
         //      System.out.println(numToInsert);                  // print the list if you want
-
+        int sumCost = 0;
         AVLTree testing = new AVLTree();
-
+        int cost = 0;
         for (int i : numToInsert) {
-            testing.insert(i, ""+i);
+            cost = testing.insert(i, ""+i);
+            sumCost += cost;
             max = Math.max(i,max);
             min = Math.min(i,min);
             sizeInCheck++;
+            System.out.println("the cost of this insertion is " + cost);
             if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
                 System.out.println("error in insert - in balanced" );
                 errorDelete = true;
@@ -212,7 +215,7 @@ public class SelfTester {
             if (testing.getRoot() != null && !(testing.size() == (sizeInCheck))){
                 System.out.println("error in insert - in size");
                 errorDelete = true;}}
-
+            System.out.println("the  overAll cost of all  insertion is " + sumCost);
 
 //        if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
 //            System.out.println("error in insert - in balanced" );}
@@ -245,14 +248,17 @@ public class SelfTester {
         Collections.shuffle(numToInsert);                                 // shuffle the list again for random order in delete
         int[] numToDelete = {13,11};
         int cnt = 0;
+        int costD = 0;
+        int sumCostD = 0;
         ArrayList<Integer> copy = new ArrayList<>(numToInsert);
         for (int i : numToInsert) {
             //      System.out.println(i);                                         // if you want to see the number that is being deleted
-            testing.delete(i);
+            costD = testing.delete(i);
+            sumCostD += costD;
             cnt++;
             sizeInCheck--;
 
-
+            System.out.println("the cost of this deletion is "+ costD);
             copy.remove(copy.indexOf(i));
             if (copy.size() > 0){
             max = Collections.max(copy);
@@ -285,7 +291,8 @@ public class SelfTester {
             if (cnt > numberOfDelete ){
                 break;}
         }
-        //check keys to array after delete
+            System.out.println("the overAll cost of All deletion is "+ sumCostD);
+            //check keys to array after delete
             int[] treeArrD = testing.keysToArray();
             Collections.sort(copy);
             int[] compareD = new int[copy.size()];
