@@ -3,7 +3,7 @@ import java.util.*;
 public class SelfTester {
 
     public static void main(String[] args) {
-        insertDeleteTester(10, 5,10 );
+        insertDeleteTester(10, 10,10 );
  //       joinSpliteTester(5 , 10);
 
 
