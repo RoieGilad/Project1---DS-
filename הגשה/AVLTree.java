@@ -7,6 +7,15 @@
  * distinct integer keys and info.
  *
  */
+//tal nof
+//		i.d. : 313370686
+//		username: talnof
+//
+//roie gilad
+//		i.d : 314967878
+//		username: roiegilad
+//
+//
 
 public class AVLTree {
 	private IAVLNode root;
@@ -82,7 +91,7 @@ public class AVLTree {
 		{
 			node.updateNode(); //promote
 			if (node.getParent() != null){
-				rebalance(node.getParent(), d+1); //counting 1 promotion
+				return rebalance(node.getParent(), d+1); //counting 1 promotion
 			} else{
 				return d+1;
 			}
@@ -103,7 +112,7 @@ public class AVLTree {
 				rotate_right(x, z);
 				x.updateNode();
 				if (node.getParent() != null){
-					rebalance(x.getParent(), d+2); //counting 1 promotion
+					return rebalance(x.getParent(), d+2); //counting 1 promotion
 				} else{
 					return d+2;
 				}
@@ -135,7 +144,7 @@ public class AVLTree {
 				rotate_left(z, x);
 				x.updateNode();
 				if (node.getParent() != null){
-					rebalance(x.getParent(), d+2); //counting 1 promotion
+					return rebalance(x.getParent(), d+2); //counting 1 promotion
 				} else{
 					return d+2;
 				}

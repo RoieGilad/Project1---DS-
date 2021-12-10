@@ -4,7 +4,7 @@ public class SelfTester {
 
     public static void main(String[] args) {
         insertDeleteTester(10, 10,10 );
- //       joinSpliteTester(5 , 10);
+        joinSpliteTester(10 , 100);
 
 
     }
@@ -65,7 +65,7 @@ public class SelfTester {
         else {
              cost = right.join(X , left);
             treeInCheck = right ; }
-        System.out.println("the cost of this join is " + cost);
+  //      System.out.println("the cost of this join is " + cost);
 
         if (!SelfTester.checkBalanceOfTree(treeInCheck.getRoot())) {          // checking if the tree is balanced
             System.out.println("error in join - in balanced" );
@@ -197,7 +197,7 @@ public class SelfTester {
             max = Math.max(i,max);
             min = Math.min(i,min);
             sizeInCheck++;
-            System.out.println("the cost of this insertion is " + cost);
+  //          System.out.println("the cost of this insertion is " + cost);
             if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
                 System.out.println("error in insert - in balanced" );
                 errorDelete = true;
@@ -215,7 +215,7 @@ public class SelfTester {
             if (testing.getRoot() != null && !(testing.size() == (sizeInCheck))){
                 System.out.println("error in insert - in size");
                 errorDelete = true;}}
-            System.out.println("the  overAll cost of all  insertion is " + sumCost);
+ //           System.out.println("the  overAll cost of all  insertion is " + sumCost);
 
 //        if (testing.getRoot() != null && !SelfTester.checkBalanceOfTree(testing.getRoot())) {          // checking if the tree is balanced
 //            System.out.println("error in insert - in balanced" );}
@@ -258,7 +258,7 @@ public class SelfTester {
             cnt++;
             sizeInCheck--;
 
-            System.out.println("the cost of this deletion is "+ costD);
+  //          System.out.println("the cost of this deletion is "+ costD);
             copy.remove(copy.indexOf(i));
             if (copy.size() > 0){
             max = Collections.max(copy);
@@ -291,7 +291,7 @@ public class SelfTester {
             if (cnt > numberOfDelete ){
                 break;}
         }
-            System.out.println("the overAll cost of All deletion is "+ sumCostD);
+ //           System.out.println("the overAll cost of All deletion is "+ sumCostD);
             //check keys to array after delete
             int[] treeArrD = testing.keysToArray();
             Collections.sort(copy);
